@@ -2,6 +2,14 @@
    KSM Technology Partners — Global Styles
    ============================================================ */
 
+@font-face {
+  font-family: 'General Sans';
+  src: url("https://cdn.prod.website-files.com/67bdf63…/67bdf63…_GeneralSans-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Custom Properties */
 :root {
   --color-primary:      #004D71;   /* dark navy — header bg, headings */
@@ -13,7 +21,7 @@
   --color-text-muted:   #4a6077;
   --color-bg:           #f4f9fd;   /* page background */
 
-  --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-sans: 'General Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
   --font-heading: var(--font-sans);
 
   --max-width: 1200px;
