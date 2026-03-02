@@ -4,7 +4,7 @@
   description       = "A highly customizable consulting & business astro theme built with Tailwind CSS and Astro Js" # Shared description for SEO and OpenGraph
   tagline           = "Innovate. Execute. Empower."
   tagline_separator = "" # default is " - " 
-  base_url          = "https://ksmpartners.com" # Base URL for the site and used in OpenGraph meta tags.
+  base_url          = "https://ksmpartners.github.io/ksm-site" # Base URL for the site and used in OpenGraph meta tags.
   logo              = "/images/KSM_Logo_2c_White.svg" # Path to the site's logo
   logo_alternate    = "/images/KSM_Logo_2c_Blue.svg" # Path to the site's logo
   logo_text         = "" # Text displayed next to the logo
