@@ -6,7 +6,7 @@
       "hasMegaMenu": true,
       "testimonial": {
         "enable": true,
-        "image": "/ksm-website/images/customer-image.png",
+        "image": "/images/customer-image.png",
         "content": "Looka strategic planning helped us streamline operations and unlock new market opportunities. We've seen a remarkable 25% increase in revenue within the last year."
       },
       "services": {
@@ -25,17 +25,17 @@
                 {
                   "enable": true,
                   "name": "Services",
-                  "url": "/ksm-website/services/"
+                  "url": "/services/"
                 },
                 {
                   "enable": true,
                   "name": "Case Studies",
-                  "url": "/ksm-website/case-studies/"
+                  "url": "/case-studies/"
                 },
                 {
                   "enable": false,
                   "name": "Career",
-                  "url": "/ksm-website/career/"
+                  "url": "/career/"
                 }
               ]
             },
@@ -46,12 +46,12 @@
                 {
                   "enable": true,
                   "name": "About",
-                  "url": "/ksm-website/about/"
+                  "url": "/about/"
                 },
                 {
                   "enable": true,
                   "name": "Team",
-                  "url": "/ksm-website/team"
+                  "url": "/team"
                 }
               ]
             }
@@ -68,12 +68,12 @@
                 {
                   "enable": true,
                   "name": "Classic",
-                  "url": "/ksm-website/blog/"
+                  "url": "/blog/"
                 },
                 {
                   "enable": true,
                   "name": "Modern",
-                  "url": "/ksm-website/layouts-example/blog-list-modern/"
+                  "url": "/layouts-example/blog-list-modern/"
                 }
               ]
             },
@@ -84,12 +84,12 @@
                 {
                   "enable": true,
                   "name": "Minimal",
-                  "url": "/ksm-website/layouts-example/blog-single-minimal/"
+                  "url": "/layouts-example/blog-single-minimal/"
                 },
                 {
                   "enable": true,
                   "name": "Modern",
-                  "url": "/ksm-website/blog/post-1/"
+                  "url": "/blog/post-1/"
                 }
               ]
             }
@@ -106,12 +106,12 @@
                 {
                   "enable": true,
                   "name": "Classic & Masonry",
-                  "url": "/ksm-website/layouts-example/portfolio-classic-masonry"
+                  "url": "/layouts-example/portfolio-classic-masonry"
                 },
                 {
                   "enable": true,
                   "name": "Overlay & Masonry",
-                  "url": "/ksm-website/layouts-example/portfolio-overlay-masonry"
+                  "url": "/layouts-example/portfolio-overlay-masonry"
                 }
               ]
             },
@@ -122,12 +122,12 @@
                 {
                   "enable": true,
                   "name": "Modern",
-                  "url": "/ksm-website/layouts-example/portfolio-single-modern/"
+                  "url": "/layouts-example/portfolio-single-modern/"
                 },
                 {
                   "enable": true,
                   "name": "Modern With Sidebar",
-                  "url": "/ksm-website/case-studies/case-studies-01/"
+                  "url": "/case-studies/case-studies-01/"
                 }
               ]
             }
@@ -138,7 +138,7 @@
     {
       "enable": true,
       "name": "Contact",
-      "url": "/ksm-website/contact/",
+      "url": "/contact/",
       "badge": {
         "enable": true,
         "label": "NEW",
@@ -164,22 +164,22 @@
     {
       "enable": true,
       "name": "About Us",
-      "url": "/ksm-website/about/"
+      "url": "/about/"
     },
     {
       "enable": true,
       "name": "Contact Us",
-      "url": "/ksm-website/contact/"
+      "url": "/contact/"
     },
     {
       "enable": false,
       "name": "Team Members",
-      "url": "/ksm-website/team/"
+      "url": "/team/"
     },
     {
       "enable": false,
       "name": "Our Services",
-      "url": "/ksm-website/services/"
+      "url": "/services/"
     }
   ]
 }
