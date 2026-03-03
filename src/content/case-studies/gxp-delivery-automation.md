@@ -1,37 +1,25 @@
 ---
-title: GxP Delivery Automation Pipeline
-client: Global Pharmaceutical Manufacturer
+title: GxP Delivery Automation With Azure DevOps
 vertical: Life Sciences
-summary: Designed a fully validated CI/CD pipeline that reduced release cycle time from 6 weeks to 3 days while automatically generating IQ/OQ/PQ documentation.
+order: 3
+featured: true
+client: Global Pharmaceutical Company
+summary: We reduced software deployment cycle times from years to weeks for a pharmaceutical client by implementing continuous delivery and GitOps practices within a GxP-compliant Azure DevOps pipeline, while converting manual checklists and test scripts into automated, auditable processes.
+image: images/case-studies/gxp-delivery-automation.jpg
 ---
 
-## Background
+## Overview
 
-A global pharmaceutical manufacturer was releasing updates to its manufacturing execution system (MES) on a 6-week cycle — constrained by the extensive manual validation documentation required under FDA 21 CFR Part 11 and EU Annex 11 regulations. Every release required hundreds of hours of manual test execution and documentation preparation.
-
-## Challenge
-
-The validation burden was not just slowing delivery — it was creating quality risks. Manual test execution introduced inconsistency, and the documentation process was a bottleneck that caused qualified staff to spend time on documentation rather than higher-value validation activities.
-
-The client needed a way to accelerate delivery without compromising regulatory compliance or audit readiness.
+We partnered with a pharmaceutical client to reduce deployment cycle times for mission-critical custom software, while injecting additional quality safeguards into the deployment process. By implementing continuous delivery with a GitOps-based deployment flow, feature deployment cycles were reduced from years to weeks.
 
 ## Solution
 
-KSM designed a delivery automation framework specifically for GxP environments. The key insight was that automated test execution, when properly instrumented, can produce validation evidence that is more complete and reproducible than manual testing.
+**Infrastructure as Code:** Converted infrastructure configuration from manual checklists to code, reducing environment build time from weeks to minutes.
 
-**Pipeline architecture:**
+**Behavior-Driven Development:** Transformed static Word-based requirements documents into BDD specifications stored in version control, simplifying traceability from product feature to design to requirement.
 
-- **Source Control:** Git with branch protection and mandatory code review (supports change control requirements)
-- **Automated Testing:** Pytest-based test suite covering 850+ functional scenarios, run against each candidate build
-- **Validation Evidence Generator:** Custom framework that captures test inputs, expected results, actual results, system version, and tester identity (service account) into structured validation reports
-- **Document Assembly:** Automated generation of IQ/OQ/PQ documents in Word and PDF format from test execution results
-- **Electronic Approval Workflow:** Integration with the client's DocuSign-based approval system for e-signature of validation packages
-- **Deployment Automation:** Ansible playbooks for consistent, documented environment provisioning
+**Test Automation:** Replaced manual test scripts with automated tests, reducing testing cycles from weeks to hours and enabling full regression testing for even minor code changes.
 
-## Results
+## Technology
 
-- Release cycle reduced from 6 weeks to 3 days
-- Validation documentation cost reduced by 70%
-- 100% test coverage of critical functional requirements (up from 60% manual coverage)
-- Zero audit findings related to software validation in two subsequent FDA inspections
-- Framework adopted for two additional GxP systems at the client site
+The solution was built using Azure DevOps and is deployed to deliver GxP software meeting rigorous internal quality assurance and external regulatory agency requirements.

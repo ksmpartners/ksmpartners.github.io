@@ -1,37 +1,34 @@
 ---
-title: Real-Time Power Flow Visualization
-client: Investor-Owned Utility
+title: Real-Time Power Flow Calculation Engine
 vertical: Utilities
-summary: Built a real-time power flow visualization tool integrating SCADA historian data with GIS, enabling grid operators to see live system state on an interactive map.
+order: 2
+featured: false
+client: Independent System Operator
+summary: We engineered a mission-critical nodal calculation platform for an ISO that has grown from 1 to 27 jobs over 10+ years and now ingests, processes, and indexes between 300 and 400 GB of data per day.
+image: images/case-studies/real-time-power-flow.jpg
 ---
 
-## Background
+## Overview
 
-A large investor-owned utility operating a complex transmission network needed better situational awareness for its grid operations center. Operators were toggling between separate SCADA displays and static GIS maps to understand system state — a time-consuming and error-prone process during high-stress events.
-
-## Challenge
-
-Integrating real-time SCADA data with GIS presented significant technical challenges:
-
-- OSIsoft PI historian data needed to be projected onto GIS geometries in real time
-- The GIS (Esri ArcGIS) and SCADA systems had no native integration path
-- Data latency requirements were strict — display refresh under 5 seconds
-- The solution had to operate on the utility's secure operational network (OT environment) with air-gap constraints
+We collaborated with an Independent System Operator (ISO) in the power generation sector to develop a highly scalable, mission-critical platform that calculates real-time electricity flow across interfaces with neighboring ISOs.
 
 ## Solution
 
-KSM designed a bridge service that consumed data from the OSIsoft PI Web API and pushed structured updates to a custom map service layer exposed to the ArcGIS dashboard. We built a lightweight middleware component in Python that handled polling, transformation, and caching.
+Working alongside subject matter experts, we engineered and delivered a fast nodal calculation system enabling users to examine data at any calculation stage while maintaining records for five years.
 
-**Key components:**
+**Platform capabilities:**
 
-- **PI Connector:** Python service polling OSIsoft PI Web API for real-time tag values across 3,400 measurement points
-- **GIS Bridge:** Custom ArcGIS dynamic feature service that refreshed from the PI Connector output on a 3-second cycle
-- **Operator Dashboard:** ArcGIS Operations Dashboard configured with custom widgets for alarm acknowledgment and equipment detail drill-down
-- **Historical Playback:** Time-slider capability allowing operators to replay historical system states for post-event analysis
+- Flexible scheduling of computing jobs
+- Re-execution of previous jobs
+- Sophisticated validations and alerting
+- Integration with over a dozen systems in the client's portfolio
+- Directed acyclic graph processing engine
+- Agile project control with continuous integration practices
 
-## Results
+## Scale
 
-- Operator situational awareness significantly improved — confirmed by post-deployment usability study
-- System state comprehension time reduced from an average of 4 minutes to under 60 seconds during simulated events
-- Deployed in the OT environment with full network segmentation compliance
-- Adopted by 100% of shift operators within 30 days of deployment
+The platform has been continually expanded from 1 to 25+ jobs over its lifetime, and currently ingests, processes, and indexes between 300 GB and 400 GB of data per day.
+
+## Ongoing Partnership
+
+This long term engagement spans decades of continuous enhancement and maintenance, demonstrating long-term client satisfaction and platform stability.

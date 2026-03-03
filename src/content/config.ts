@@ -18,6 +18,8 @@ const caseStudies = defineCollection({
     vertical: z.enum(['Utilities', 'Life Sciences', 'Other']),
     summary: z.string(),
     image: z.string().optional(),
+    order: z.number().optional(),          // sort order within vertical and among featured
+    featured: z.boolean().default(false),  // show in "Recent Work" on home page
   }),
 });
 

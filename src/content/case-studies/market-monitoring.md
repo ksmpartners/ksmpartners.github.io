@@ -1,35 +1,29 @@
 ---
-title: Real-Time Market Monitoring Platform
-client: Regional Transmission Organization
+title: Market Monitoring Data Collection and Aggregation
 vertical: Utilities
-summary: Replaced a legacy batch-reporting system with a real-time market monitoring platform processing millions of events per day across 14 energy markets.
+order: 1
+featured: true
+client: Independent Market Monitor
+summary: We built a modular, AWS-hosted web portal that collects competitive marketplace data from diverse market participants. In production for over eight years, the platform continuously expands to meet evolving regulatory requirements.
+image: images/case-studies/market-monitoring.jpg
 ---
 
-## Background
+## Overview
 
-A regional transmission organization (RTO) managing electricity markets across a multi-state footprint needed to replace a decade-old batch reporting system with a real-time platform capable of monitoring market operations, detecting anomalies, and alerting operators within seconds.
-
-## Challenge
-
-The legacy system could only produce reports on 15-minute intervals, leaving operations teams unable to respond to market irregularities in real time. With increasing renewable penetration and more volatile pricing, the inability to monitor markets continuously represented a significant operational and financial risk.
-
-Additionally, the system had to integrate with 14 separate energy markets, each with different data formats, protocols, and latency characteristics.
+A client responsible for monitoring a competitive marketplace required a tool to collect data from a broad range of market participants. Each participant provides a unique combination of data about shared resources. The client aggregates and analyzes this data on a quarterly basis to ensure competitive and non-discriminatory operation of the market.
 
 ## Solution
 
-KSM designed and implemented an event-driven market monitoring platform using Apache Kafka as the central messaging backbone. We built custom connectors for each of the 14 markets, normalizing data into a common schema before routing events to downstream processing components.
+We built a web portal with a modular architecture that simplifies the addition of new data sources. New modules can be selectively pushed to the market participants that need them. The portal provides a uniform interface for data collection and enables data validations at the point of capture.
 
-**Architecture highlights:**
+**Key capabilities:**
 
-- **Ingest Layer:** Custom Kafka producers pulling from market APIs and SFTP feeds, handling 2M+ events per day
-- **Stream Processing:** Apache Flink jobs for real-time aggregation, threshold detection, and anomaly scoring
-- **Alert Engine:** Rules-based alert routing with priority escalation to operations consoles and email/SMS
-- **API Layer:** RESTful APIs consumed by the new operator dashboard
-- **Dashboard:** React-based operator console with sub-second refresh and drill-down capability
+- Modular design allowing new data source types to be added without disrupting existing participants
+- Selective module deployment targeting only the participants that require them
+- Uniform data collection interface across a diverse participant base
+- Data validations enforced at the point of capture
+- Hosted on Amazon Web Services
 
-## Results
+## Ongoing Partnership
 
-- Market anomaly detection latency reduced from 15 minutes to under 10 seconds
-- Operator response time to market events improved by 85%
-- Platform successfully processed peak loads of 4M events/hour during volatile market periods
-- Zero production incidents in the 18 months following go-live
+Since we deployed the first release of this solution on Amazon Web Services, we have continued to integrate new modules and enhance existing ones. The continuity of the partnership allows the client to keep pace with evolving regulatory requirements and customer needs, while maintaining infrastructure security patches and feature releases.

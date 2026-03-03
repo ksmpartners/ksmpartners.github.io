@@ -9,7 +9,9 @@ const services = (await getCollection('services')).sort(
 );
 
 const allCaseStudies = await getCollection('case-studies');
-const featuredCaseStudies = allCaseStudies.slice(0, 3);
+const featuredCaseStudies = allCaseStudies
+  .filter(cs => cs.data.featured)
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
 
 const serviceIcons: Record<string, string> = {
   'cloud-migration': '☁️',

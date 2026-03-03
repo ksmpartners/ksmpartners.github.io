@@ -1,42 +1,26 @@
 ---
-title: Clinical Data Analysis Platform
-client: Contract Research Organization
+title: Automated and Controlled Clinical Data Analysis
 vertical: Life Sciences
-summary: Built a scalable data analysis platform that reduced clinical trial data lock timelines by 40% while improving data integrity and audit traceability.
+order: 4
+featured: false
+client: Global Pharmaceutical Company
+summary: We architected and delivered a cloud-based Azure Kubernetes platform that accelerates clinical data analysis from raw data to submission-ready assets, with full GxP and ALCOA+ audit compliance built in.
+image: images/case-studies/clinical-data-analysis.jpg
 ---
 
-## Background
+## Overview
 
-A contract research organization (CRO) managing multiple Phase II and Phase III clinical trials was struggling with data lock timelines. The process of cleaning, transforming, and locking clinical trial data involved multiple teams, numerous manual handoffs, and a collection of ad-hoc scripts that were difficult to validate.
-
-## Challenge
-
-Clinical data management in a regulated environment requires:
-
-- Complete audit trails for every data transformation
-- Validated processes that produce reproducible results
-- Ability to demonstrate data integrity to FDA reviewers
-- Support for multiple data standards (CDASH, SDTM, ADaM)
-- Integration with multiple clinical data management systems (CDMS) and electronic data capture (EDC) platforms
-
-The existing approach — a mix of SAS scripts, Excel workbooks, and manual steps — could not provide the auditability or efficiency the organization needed as trial volumes grew.
+We partnered with a top-tier global pharmaceutical client to design, build, and deploy a cloud-based platform to accelerate clinical data analysis. The initiative addressed two core objectives: reducing conversion time from unprocessed clinical data to submission-ready assets while preserving and strengthening data integrity, and minimizing reliance on on-premises infrastructure by aligning with the organization's cloud migration strategy.
 
 ## Solution
 
-KSM designed and built a unified clinical data analysis platform on AWS, using Python and R for statistical processing, with a comprehensive audit framework that captured every data transformation with full provenance.
+The platform comprises multiple web applications and microservices deployed on Microsoft Azure Kubernetes Service. Key technical components include:
 
-**Platform components:**
+- **Polyglot Analysis Support:** Execution of analyses in R, Python, SAS, and containerizable tools
+- **Kubernetes-Native Engine:** Integrated with Domino Data Science platform for controlled analysis execution
+- **Configurable Processing Graphs:** Adaptable workflows matching evolving business and regulatory requirements
+- **Complete Audit Trail:** Full processing documentation demonstrating data integrity and control per GxP and ALCOA+ guidelines
 
-- **Ingest Layer:** Automated connectors to Medidata Rave, Oracle Clinical, and custom EDC systems
-- **Data Standardization:** Automated CDASH → SDTM mapping with configurable transformation rules
-- **Analysis Datasets:** ADaM dataset generation with full lineage tracking
-- **Audit Engine:** Immutable event log capturing every transformation, version, and reviewer action
-- **Reviewer Interface:** Web-based data review tool with side-by-side raw vs. transformed data views and discrepancy flagging
-- **Submission Packages:** Automated generation of CDISC-compliant submission datasets and define.xml
+## Project Scope
 
-## Results
-
-- Data lock timelines reduced by 40% across all active trials
-- Validation documentation effort reduced by 65% through automated evidence generation
-- Zero data integrity findings in subsequent FDA and EMA review
-- Platform scaled to support 23 concurrent trials within 18 months of launch
+This was a multi-year, multi-vendor program replacing legacy software that we had maintained and enhanced for almost 20 years. Delivered using the SAFe agile framework across multiple product increments, we architected, delivered, and integrated multiple bespoke and packaged software titles over the course of the four-year engagement.

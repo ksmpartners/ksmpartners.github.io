@@ -4,10 +4,11 @@ import CaseStudyCard from '../../components/CaseStudyCard.astro';
 import { getCollection } from 'astro:content';
 
 const allCaseStudies = await getCollection('case-studies');
+const byOrder = (a, b) => (a.data.order ?? 99) - (b.data.order ?? 99);
 
-const utilities = allCaseStudies.filter(cs => cs.data.vertical === 'Utilities');
-const lifeSciences = allCaseStudies.filter(cs => cs.data.vertical === 'Life Sciences');
-const other = allCaseStudies.filter(cs => cs.data.vertical === 'Other');
+const utilities = allCaseStudies.filter(cs => cs.data.vertical === 'Utilities').sort(byOrder);
+const lifeSciences = allCaseStudies.filter(cs => cs.data.vertical === 'Life Sciences').sort(byOrder);
+const other = allCaseStudies.filter(cs => cs.data.vertical === 'Other').sort(byOrder);
 ---
 <PageLayout title="Case Studies" description="Explore KSM Technology Partners case studies across utilities and life sciences.">
 

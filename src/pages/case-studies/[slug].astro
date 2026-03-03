@@ -30,7 +30,10 @@ const { Content } = await render(cs);
         <Content />
       </div>
       <aside>
-        <ImagePlaceholder caption={cs.data.title} />
+        {cs.data.image
+          ? <figure class="image-placeholder"><img src={`${import.meta.env.BASE_URL}${cs.data.image}`} alt={cs.data.title} style="border-radius: var(--radius); width: 100%;" /></figure>
+          : <ImagePlaceholder caption={cs.data.title} />
+        }
         <div class="card" style="margin-top: 1.5rem;">
           <h3>Ready to discuss your challenge?</h3>
           <p>Contact us to explore how we can help with your specific situation.</p>
