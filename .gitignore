@@ -6,6 +6,7 @@ node_modules/
 
 # Astro generated files
 .astro/
+public/__astro_font_generated__/
 
 # Environment variables
 .env
