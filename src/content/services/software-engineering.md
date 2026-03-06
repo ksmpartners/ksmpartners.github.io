@@ -1,6 +1,6 @@
 ---
 title: Software Engineering
-description: Custom software development for complex domains — from embedded systems to cloud-native web applications.
+description: Custom software development for complex domains — from legacy upgrades to cloud-native web applications.
 order: 1
 ---
 
