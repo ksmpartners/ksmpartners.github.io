@@ -1,7 +1,7 @@
 ---
 title: Test Automation
 description: Build comprehensive automated test suites that accelerate delivery while satisfying regulatory validation requirements.
-order: 6
+order: 5
 ---
 
 ## Test Automation Services

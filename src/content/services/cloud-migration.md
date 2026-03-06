@@ -1,7 +1,7 @@
 ---
 title: Cloud Migration
 description: Modernize your infrastructure with proven cloud migration strategies that minimize risk and maximize business value.
-order: 1
+order: 2
 ---
 
 ## Cloud Migration Services

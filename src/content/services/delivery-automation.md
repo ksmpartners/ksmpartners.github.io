@@ -1,7 +1,7 @@
 ---
 title: Delivery Automation
 description: Accelerate software delivery with CI/CD pipelines, infrastructure-as-code, and automated validation frameworks.
-order: 2
+order: 4
 ---
 
 ## Delivery Automation Services
