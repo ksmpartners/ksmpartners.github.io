@@ -28,11 +28,11 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.9",
-    "astro": "^6.4.2",
+    "@astrojs/check": "^0.9.12",
+    "astro": "^7.4.7",
     "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "puppeteer": "^24.39.1"
+    "puppeteer": "^25.16.0"
   }
 }
