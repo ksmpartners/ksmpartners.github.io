@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" role="img" aria-labelledby="t d">
+  <title id="t">BCSI controls on a Databricks lakehouse</title>
+  <desc id="d">Control-room recordings, transcripts, network models and operational records flow over Private Link into a Databricks workspace governed by Unity Catalog. Four stages map to NERC CIP: Identify (CIP-011-3 R1.1), Protect (CIP-011-3 R1.2), Prove (CIP-004-7 R6) and Retire (CIP-011-3 R2). An identity provider syncs the bcsi-authorized group over SCIM to authorize, verify and revoke access.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3C9DCC"/>
+    </marker>
+    <filter id="lift" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1D2F3D" flood-opacity="0.06"/>
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#3C9DCC" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      text { font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif; fill: #1D2F3D; }
+      .mono { font-family: 'DM Mono', 'Fira Code', Consolas, monospace; }
+      .eyebrow { font-size: 13px; letter-spacing: 0.08em; fill: #3C9DCC; font-weight: 500; }
+      .src-title { font-size: 16px; font-weight: 700; }
+      .src-sub { font-size: 13px; fill: #3A4A54; }
+      .num { font-size: 13px; fill: #3C9DCC; }
+      .stage { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+      .chip { font-size: 12px; fill: #0B7F73; }
+      .item { font-size: 13.5px; fill: #3A4A54; }
+      .small { font-size: 12px; fill: #3A4A54; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="620" rx="20" fill="#F3F6F8"/>
+
+  <!-- Sources -->
+  <text x="40" y="76" class="eyebrow mono">BCSI SOURCES</text>
+  <g filter="url(#lift)">
+    <rect x="40" y="96" width="250" height="66" rx="10" fill="#FFFFFF" stroke="#B2D1EA"/>
+    <rect x="40" y="176" width="250" height="66" rx="10" fill="#FFFFFF" stroke="#B2D1EA"/>
+    <rect x="40" y="256" width="250" height="66" rx="10" fill="#FFFFFF" stroke="#B2D1EA"/>
+    <rect x="40" y="336" width="250" height="66" rx="10" fill="#FFFFFF" stroke="#B2D1EA"/>
+  </g>
+  <text x="60" y="124" class="src-title">Call recordings</text>
+  <text x="60" y="146" class="src-sub">Control-room audio</text>
+  <text x="60" y="204" class="src-title">Transcripts</text>
+  <text x="60" y="226" class="src-sub">Speaker-labelled, timestamped</text>
+  <text x="60" y="284" class="src-title">Network models</text>
+  <text x="60" y="306" class="src-sub">EMS exports, one-line diagrams</text>
+  <text x="60" y="364" class="src-title">Operational records</text>
+  <text x="60" y="386" class="src-sub">Switching orders, outage notes</text>
+
+  <!-- Ingest arrow -->
+  <line x1="296" y1="249" x2="352" y2="249" stroke="#3C9DCC" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="324" y="236" class="small mono" text-anchor="middle">Private</text>
+  <text x="324" y="270" class="small mono" text-anchor="middle">Link</text>
+
+  <!-- Workspace -->
+  <rect x="360" y="50" width="800" height="378" rx="16" fill="#FFFFFF" stroke="#3C9DCC" stroke-width="1.5" filter="url(#lift)"/>
+  <text x="384" y="84" class="eyebrow mono">DATABRICKS WORKSPACE · UNITY CATALOG</text>
+
+  <!-- Stage cards -->
+  <g>
+    <rect x="384" y="104" width="176" height="300" rx="12" fill="#F3F6F8"/>
+    <rect x="384" y="104" width="176" height="4" rx="2" fill="#3C9DCC"/>
+    <text x="400" y="138" class="num mono">01</text>
+    <text x="400" y="166" class="stage">Identify</text>
+    <rect x="400" y="180" width="108" height="24" rx="12" fill="#E4F6F4"/>
+    <text x="454" y="196" class="chip mono" text-anchor="middle">CIP-011-3 R1.1</text>
+    <text x="400" y="240" class="item">• Data classification</text>
+    <text x="400" y="268" class="item">• Governed tag bcsi</text>
+    <text x="400" y="296" class="item">• Transcript scanner</text>
+    <text x="400" y="324" class="item">• Labels at ingest</text>
+  </g>
+  <g>
+    <rect x="576" y="104" width="176" height="300" rx="12" fill="#F3F6F8"/>
+    <rect x="576" y="104" width="176" height="4" rx="2" fill="#3C9DCC"/>
+    <text x="592" y="138" class="num mono">02</text>
+    <text x="592" y="166" class="stage">Protect</text>
+    <rect x="592" y="180" width="108" height="24" rx="12" fill="#E4F6F4"/>
+    <text x="646" y="196" class="chip mono" text-anchor="middle">CIP-011-3 R1.2</text>
+    <text x="592" y="240" class="item">• ABAC column masks</text>
+    <text x="592" y="268" class="item">• ABAC row filters</text>
+    <text x="592" y="296" class="item">• Customer keys</text>
+    <text x="592" y="324" class="item">• Private networking</text>
+  </g>
+  <g>
+    <rect x="768" y="104" width="176" height="300" rx="12" fill="#F3F6F8"/>
+    <rect x="768" y="104" width="176" height="4" rx="2" fill="#3C9DCC"/>
+    <text x="784" y="138" class="num mono">03</text>
+    <text x="784" y="166" class="stage">Prove</text>
+    <rect x="784" y="180" width="108" height="24" rx="12" fill="#E4F6F4"/>
+    <text x="838" y="196" class="chip mono" text-anchor="middle">CIP-004-7 R6</text>
+    <text x="784" y="240" class="item">• Audit system table</text>
+    <text x="784" y="268" class="item">• Data lineage</text>
+    <text x="784" y="296" class="item">• Grant inventory</text>
+    <text x="784" y="324" class="item">• Evidence queries</text>
+  </g>
+  <g>
+    <rect x="960" y="104" width="176" height="300" rx="12" fill="#F3F6F8"/>
+    <rect x="960" y="104" width="176" height="4" rx="2" fill="#3C9DCC"/>
+    <text x="976" y="138" class="num mono">04</text>
+    <text x="976" y="166" class="stage">Retire</text>
+    <rect x="976" y="180" width="108" height="24" rx="12" fill="#E4F6F4"/>
+    <text x="1030" y="196" class="chip mono" text-anchor="middle">CIP-011-3 R2</text>
+    <text x="976" y="240" class="item">• DELETE + PURGE</text>
+    <text x="976" y="268" class="item">• VACUUM old files</text>
+    <text x="976" y="296" class="item">• Key revocation</text>
+    <text x="976" y="324" class="item">• Disposal records</text>
+  </g>
+
+  <!-- Identity band -->
+  <rect x="40" y="484" width="250" height="92" rx="10" fill="#FFFFFF" stroke="#B2D1EA" filter="url(#lift)"/>
+  <text x="60" y="520" class="src-title">Identity provider</text>
+  <text x="60" y="544" class="src-sub">Joiners, movers, leavers</text>
+
+  <line x1="296" y1="530" x2="352" y2="530" stroke="#3C9DCC" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="324" y="518" class="small mono" text-anchor="middle">SCIM</text>
+
+  <rect x="360" y="484" width="800" height="92" rx="12" fill="#1D2F3D" filter="url(#lift)"/>
+  <text x="384" y="514" class="mono" style="font-size:13px; fill:#B2D1EA;">GROUP · bcsi-authorized</text>
+  <text x="384" y="542" style="font-size:16px; font-weight:600; fill:#FFFFFF;">Authorize before provisioning · Verify every 15 months · Revoke by next calendar day</text>
+  <text x="384" y="564" class="mono" style="font-size:12px; fill:#5FD4C6;">CIP-004-7 R6.1 · R6.2 · R6.3</text>
+
+  <!-- Group feeds policies -->
+  <line x1="664" y1="480" x2="664" y2="436" stroke="#3C9DCC" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="676" y="462" class="small mono">EXCEPT bcsi-authorized</text>
+</svg>

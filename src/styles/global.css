@@ -961,6 +961,13 @@ ul, ol {
   position: relative;
 }
 
+.blog-header-logo {
+  display: block;
+  height: 32px;
+  width: auto;
+  margin-bottom: var(--space-6);
+}
+
 .page-header h1 {
   color: white;
   font-size: clamp(1.75rem, 3.5vw, var(--text-4xl));
@@ -1015,6 +1022,91 @@ ul, ol {
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
   margin: var(--space-8) 0;
   color: var(--color-slate-gray);
+}
+
+.prose li {
+  margin-bottom: var(--space-2);
+}
+
+.prose :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--color-bg);
+  border: 1px solid var(--color-blue-pale);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  color: var(--color-slate);
+  overflow-wrap: anywhere;
+}
+
+.prose pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  padding: var(--space-4) var(--space-6);
+  margin: var(--space-6) 0 var(--space-8);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  box-shadow:
+    0 1px 2px rgba(29, 47, 61, 0.08),
+    0 8px 24px rgba(60, 157, 204, 0.10);
+}
+
+.prose img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: var(--space-6) 0 var(--space-8);
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 1px 2px rgba(29, 47, 61, 0.06),
+    0 12px 32px rgba(60, 157, 204, 0.12);
+}
+
+.prose p:has(> img) {
+  margin-bottom: var(--space-3);
+}
+
+.prose p:has(> img) img {
+  margin: var(--space-6) 0 0;
+}
+
+.prose .figure-caption {
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  margin-bottom: var(--space-8);
+}
+
+.prose table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin: var(--space-6) 0 var(--space-8);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+.prose td code {
+  overflow-wrap: normal;
+  white-space: nowrap;
+}
+
+.prose th,
+.prose td {
+  text-align: left;
+  vertical-align: top;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-blue-pale);
+  color: var(--color-slate-gray);
+  min-width: 9rem;
+}
+
+.prose th {
+  color: var(--color-slate);
+  font-weight: 700;
+  background: var(--color-bg);
+  border-bottom: 2px solid var(--color-blue);
 }
 
 .pull-quote {
