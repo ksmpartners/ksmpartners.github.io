@@ -1,0 +1,967 @@
+---
+import PageLayout from '../../layouts/PageLayout.astro';
+
+const base = import.meta.env.BASE_URL;
+const e6r3 = 'https://database.ich.org/sites/default/files/ICH_E6%28R3%29_Step4_FinalGuideline_2025_0106.pdf';
+const howItWorks = `${Astro.url.pathname}#how-it-works`;
+
+/*
+  Screenshots
+  -----------
+  Each slot below shows a labelled placeholder until its image exists. To fill one,
+  save the screenshot as public/images/clinical-data-repository/<name>.webp (.png and
+  .jpg also work). The page picks it up on the next build; no code change is needed.
+
+  hero            optional, sits behind the hero under a dark overlay
+  pipeline        optional, the unify pipeline graph, shown under the flow diagram
+  study-overview  study dashboard, Study overview page (Transfers table)
+  what-changed    changed values from the second transfers
+  discrepancies   study dashboard, Discrepancies page, Status set to All
+  data-cuts       study dashboard, Data cuts page (crop out the Released by column)
+  sce-read        the SCE session reading a pinned data cut
+*/
+const imageDir = 'images/clinical-data-repository';
+// Only the file names are read here; the images are served from public/ as usual.
+const found = Object.keys(import.meta.glob('/public/images/clinical-data-repository/*.{webp,png,jpg}'));
+const findImage = (name: string) => {
+  const file = found.find(path => path.split('/').pop()?.split('.')[0] === name);
+  return file ? `${base}${imageDir}/${file.split('/').pop()}` : undefined;
+};
+
+const heroImage = findImage('hero');
+const pipelineImage = findImage('pipeline');
+
+const problems = [
+  { title: 'Many sources, many formats', body: 'Reconciliation has to span every EDC, lab and vendor, each with its own file layout and its own visit numbering.' },
+  { title: 'Data that keeps changing', body: 'Sites correct entries and vendors resend files for the whole study. It is hard to see what changed between one transfer and the next.' },
+  { title: 'Review evidence built by hand', body: 'Review plans hold hundreds of checks. Proving each one ran is manual work, and what slips through surfaces in statistics or as a wave of site queries right before lock.' },
+  { title: 'A copy at every hand-off', body: 'Each hand-off to an SCE or a CRO creates another copy to move, validate and keep in sync. It also makes it harder to show who changed what.' },
+];
+
+const sources = [
+  { name: 'EDC', detail: 'ODM-XML' },
+  { name: 'Second EDC or CRO', detail: 'Vendor CSV' },
+  { name: 'Central lab', detail: 'CDISC LAB model' },
+  { name: 'IRT', detail: 'Randomization and kits' },
+];
+
+const stages = [
+  { title: 'Received', body: 'The pipeline starts when files land, with no schedule and no button. Each file is kept exactly as the source sent it and tagged with its transfer.' },
+  { title: 'Unified', body: 'Every source maps to one model with columns named by CDASH, so a check is written once and runs against all of them. Subjects are matched to IRT enrollment, and fields the model has no column for stay on the record.' },
+  { title: 'Checked', body: 'Review plan and transfer agreement checks run as SQL rules on every transfer. What they raise is recorded as discrepancies, each with the dates it opened and closed.' },
+  { title: 'Read in place', body: 'Your SCE reads the collected data with read-only access, live or pinned to a released data cut. Nothing is exported or copied.' },
+];
+
+const readers = [
+  { name: 'Your SCE', detail: 'R, SAS or Python over ODBC' },
+  { name: 'Data managers', detail: 'The study dashboard' },
+  { name: 'Auditors and QA', detail: 'From a data cut to its code and files' },
+];
+
+const features = [
+  {
+    label: 'Study overview',
+    title: 'Has every source delivered, and what is open?',
+    body: 'The study dashboard is the data manager\'s morning view. It lists each expected source with its last transfer and counts the discrepancies opened and closed since.',
+    bullets: [
+      'In the demo, the first transfers raise a randomized, dosed subject that one EDC never sent',
+      'Open discrepancies by check, source and site show where to focus',
+      'A standard Databricks AI/BI dashboard, with no custom application code',
+    ],
+    image: 'study-overview',
+    capture: 'Study dashboard, Study overview page',
+    alt: 'Transfers table listing each source with its last transfer date, its status, and its open, opened and closed discrepancy counts',
+  },
+  {
+    label: 'Change over time',
+    title: 'What changed since the last transfer?',
+    body: 'Each transfer is compared with the last one as it loads, and every version of every value is kept. The demo\'s second transfers bring 23,180 new lab results and 48 changed records, and nobody compares files to find them.',
+    bullets: [
+      'EDC corrections carry who, when and why from the audit trail',
+      'Five lab values changed with no update flag, and each is raised against the transfer agreement',
+      'Reviewers start with the 48 records that changed',
+    ],
+    image: 'what-changed',
+    capture: 'Changed values from the second transfers',
+    alt: 'Five lab results listed with their old and new values, each resent without an update flag',
+  },
+  {
+    label: 'Review evidence',
+    title: 'Did the check run, and when did the discrepancy close?',
+    body: 'Each check is a SQL rule with its description in plain English, listed by its review plan or transfer agreement ID. What it raises is stored with the date it opened and the date it closed.',
+    bullets: [
+      'Filter discrepancies by status, source, check and site',
+      'Checks only read the clinical data, and their results live in separate tables',
+      'Your data managers decide which checks each study runs',
+    ],
+    image: 'discrepancies',
+    capture: 'Study dashboard, Discrepancies page, Status set to All',
+    alt: 'Central lab discrepancies with their status, the dates each one opened and closed, and the check that raised it',
+  },
+  {
+    label: 'Data cuts',
+    title: 'Which data did this analysis use?',
+    body: 'A data cut is a named date on the study\'s history. Releasing one records who released it, when, the row counts and a fingerprint of each table, and it copies nothing. A program pinned to a cut gets the same numbers next month, whatever has arrived since.',
+    bullets: [
+      'Each cut links to the pipeline run that produced it and the commit of the code that ran',
+      'Every file in the cut is listed with its transfer and the run that loaded it',
+      'Moving an analysis to a newer cut is a one-line change',
+    ],
+    image: 'data-cuts',
+    capture: 'Study dashboard, Data cuts page with a cut selected',
+    alt: 'Released data cuts with their as-of date, pipeline run and code commit, above the list of files included in a cut',
+  },
+  {
+    label: 'SCE hand-off',
+    title: 'Can programming start without another copy?',
+    body: 'The SCE connects through the Databricks ODBC driver and a SQL warehouse, so R, SAS and Python all read the same tables in place. Its identity can read the collected data and nothing else.',
+    bullets: [
+      'Column labels travel with the data, the way a SAS dataset carries them',
+      'Treatment arm and kit data stay out of the schema the SCE reads',
+      'Every table names the team that owns it, and the SCE\'s reads are logged',
+    ],
+    image: 'sce-read',
+    capture: 'The SCE session reading a pinned data cut',
+    alt: 'The demographics table open in Positron, read from a pinned data cut with 219 rows',
+  },
+].map(f => ({ ...f, src: findImage(f.image) }));
+
+const audiences = [
+  { title: 'Clinical data management', body: 'Reconcile vendor data the day it arrives and raise a missing subject months before lock. Review time goes to the values that changed.' },
+  { title: 'Statistical programming', body: 'Start programming with no extra copy to move or validate. Pin a program to a data cut and rerun it next month for the same numbers.' },
+  { title: 'Quality and inspection readiness', body: 'Show an inspector who owned the data at each stage, who released a cut and how it was built. The path from a cut to its code and files needs no request to anyone.' },
+  { title: 'Data strategy and IT', body: 'There are fewer hops between systems and one copy to protect. Each study\'s environment is built from code in a repository, so it can be rebuilt from a commit.' },
+];
+
+const scope = [
+  { term: 'Built once, by KSM', body: 'The platform itself: intake, history, checks, data cuts, the study dashboard and the SCE hand-off.' },
+  { term: 'Once per source format', body: 'ODM-XML and the CDISC LAB model carry over between studies. A vendor\'s own CSV layout needs its own ingestion and mapping.' },
+  { term: 'For each study', body: 'Study configuration and the review plan checks. Your data managers decide what they are, and KSM builds the first study with you.' },
+];
+
+const platform = [
+  { name: 'File arrival trigger', use: 'starts the pipeline when files land' },
+  { name: 'Auto Loader', use: 'reads each file once, as sent' },
+  { name: 'AUTO CDC', use: 'keeps every version of every value' },
+  { name: 'Unity Catalog', use: 'grants, owner tags, lineage and the audit log' },
+  { name: 'AI/BI dashboards', use: 'the study dashboard' },
+  { name: 'Serverless SQL warehouse', use: 'the read path for any ODBC client' },
+];
+
+const faqs = [
+  { q: 'Does it replace our EDC?', a: 'No. It takes what your EDCs and vendors already send and works alongside them. The demo study runs two EDCs with different visit numbering, coding and file formats, and the pipeline is tuned to neither.' },
+  { q: 'Will it work with our vendors\' files?', a: 'The demo ingests ODM-XML, the CDISC LAB model and vendor-style CSV. A real export will differ in detail, and a format we have not seen means new ingestion and mapping for that feed. Each feed\'s layout comes from its data transfer agreement.' },
+  { q: 'Is the data SDTM?', a: 'No. In CDISC terms it is collected data, named by CDASH, and it is the input to your SDTM programs. Generating SDTM from it is the next phase of our work.' },
+  { q: 'Which SCEs can read it?', a: 'Any SCE that runs R, Python or SAS and can use the Databricks ODBC driver. Nothing in the repository changes from one SCE to another.' },
+  { q: 'Is it validated?', a: 'Not formally. Every environment is built from a commit, and every change is logged with the commit it ran from. That gives validation a starting point.' },
+];
+---
+<PageLayout
+  title="Clinical Data Repository on Databricks"
+  description="A clinical data repository on Databricks for trial sponsors. Bring EDC, lab and IRT data into one place, see what changed in each transfer, and let your SCE read it in place."
+>
+
+  <!-- Hero -->
+  <section
+    class={`hero${heroImage ? ' cdr-hero--image' : ''}`}
+    style={heroImage ? `--cdr-hero-bg: url(${heroImage})` : undefined}
+  >
+    <span class="overline">Clinical Data Repository on Databricks</span>
+    <h1>Trust your study data from the first transfer to database lock</h1>
+    <p>
+      Most study data now arrives from outside the EDC. KSM's Clinical Data Repository brings every
+      source into one place, shows what changed in each transfer, and gives your SCE one copy to
+      read in place.
+    </p>
+    <div class="hero-actions">
+      <a href="contact" class="btn btn-teal">Request a demo</a>
+      <a href={howItWorks} class="btn btn-outline">See how it works</a>
+    </div>
+    <a href="our-partners" class="hero-built-on">
+      <span>Built on</span>
+      <img src={`${base}images/partners/databricks-white.svg`} alt="Databricks" width="713" height="113" />
+    </a>
+  </section>
+
+  <!-- Problem -->
+  <div class="section">
+    <div class="cdr-intro">
+      <div>
+        <span class="overline">The problem</span>
+        <h2>Most of your study data never passes through the EDC</h2>
+        <p class="intro-para">
+          Central labs, IRT, eCOA and other vendors each send data in their own format, and many
+          studies run more than one EDC across in-house and CRO work. At the SCDM conference in
+          September 2026, speakers put the share of study data outside the EDC at about 70% and
+          named vendor data the leading cause of end-of-study delay.
+        </p>
+      </div>
+      <aside class="cdr-reg-block">
+        <div class="cdr-label">ICH E6(R3)</div>
+        <p>
+          <a href={e6r3} target="_blank" rel="noopener noreferrer">E6(R3)</a> asks for oversight in
+          proportion to risk, defined critical-to-quality factors, and evidence of who owns the data
+          at each stage and how it was transferred and transformed. The repository records that
+          evidence as each transfer is processed.
+        </p>
+      </aside>
+    </div>
+    <div class="cdr-problems">
+      {problems.map(p => (
+        <div class="cdr-problem">
+          <h3>{p.title}</h3>
+          <p>{p.body}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="section-pale" id="how-it-works">
+    <div class="section">
+      <span class="overline">How it works</span>
+      <h2>One copy of the study, from vendor file to SCE</h2>
+      <p class="intro-para cdr-lede">
+        Each study gets its own catalog on Databricks. A transfer moves through four stages inside
+        it, starting when the files land.
+      </p>
+
+      <div class="cdr-flow">
+        <div class="cdr-flow-row">
+          <span class="cdr-flow-heading">Your sources</span>
+          <ul class="cdr-chips cdr-chips--4">
+            {sources.map(s => (
+              <li class="cdr-chip">
+                <strong>{s.name}</strong>
+                <span>{s.detail}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="cdr-flow-arrow" aria-hidden="true">
+          <svg width="16" height="28" viewBox="0 0 16 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1v25M2 20l6 6 6-6" /></svg>
+        </div>
+
+        <div class="cdr-core">
+          <span class="cdr-flow-heading cdr-flow-heading--light">One catalog per study</span>
+          <ol class="cdr-stages">
+            {stages.map((s, i) => (
+              <li class="cdr-stage">
+                <span class="cdr-stage-num">{String(i + 1).padStart(2, '0')}</span>
+                <h3>{s.title}</h3>
+                <p>{s.body}</p>
+              </li>
+            ))}
+          </ol>
+          <p class="cdr-core-note">
+            Every version of every value is kept, with the transfer that brought it and the transfer
+            that replaced it.
+          </p>
+        </div>
+
+        <div class="cdr-flow-arrow" aria-hidden="true">
+          <svg width="16" height="28" viewBox="0 0 16 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1v25M2 20l6 6 6-6" /></svg>
+        </div>
+
+        <div class="cdr-flow-row">
+          <span class="cdr-flow-heading">Who reads it</span>
+          <ul class="cdr-chips cdr-chips--3">
+            {readers.map(r => (
+              <li class="cdr-chip">
+                <strong>{r.name}</strong>
+                <span>{r.detail}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {pipelineImage && (
+        <figure class="cdr-pipeline">
+          <img
+            src={pipelineImage}
+            alt="Pipeline graph in Databricks with source tables from two EDCs, the central lab and IRT feeding the unified tables, subject reconciliation and the record of changes"
+            loading="lazy"
+          />
+          <figcaption class="image-caption">
+            The Unified stage as it runs in Databricks, ending in subject reconciliation and the record of changes
+          </figcaption>
+        </figure>
+      )}
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="section">
+    <span class="overline">What you get</span>
+    <h2>The questions it answers</h2>
+    <p class="intro-para cdr-lede">
+      The screens below come from our demo study: test data generated from the public CDISC pilot
+      study (306 subjects, 17 sites) and delivered as transfers from two EDCs, a central lab and IRT.
+    </p>
+    <div class="cdr-features">
+      {features.map((f, i) => (
+        <div class={`cdr-feature${i % 2 ? ' cdr-feature--reverse' : ''}`}>
+          <div class="cdr-feature-text">
+            <span class="cdr-label">{f.label}</span>
+            <h3>{f.title}</h3>
+            <p>{f.body}</p>
+            <ul class="cdr-list">
+              {f.bullets.map(b => <li>{b}</li>)}
+            </ul>
+          </div>
+          <div class="cdr-feature-media">
+            {f.src ? (
+              <img src={f.src} alt={f.alt} loading="lazy" />
+            ) : (
+              <div class="cdr-shot" role="img" aria-label={`Screenshot to come: ${f.capture}`}>
+                <span class="cdr-shot-tag">Screenshot placeholder</span>
+                <strong>{f.capture}</strong>
+                <code>public/{imageDir}/{f.image}.webp</code>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- Who benefits -->
+  <div class="section-pale">
+    <div class="section">
+      <span class="overline">Who benefits</span>
+      <h2>One copy, useful to every team that touches the data</h2>
+      <div class="grid-2 cdr-audiences">
+        {audiences.map(a => (
+          <div class="card">
+            <h3>{a.title}</h3>
+            <p>{a.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- How it fits -->
+  <div class="section cdr-fit">
+    <div>
+      <span class="overline">How it fits</span>
+      <h2>It works alongside the EDC, vendors and SCE you already have</h2>
+      <p>
+        The repository is a data layer. Your EDC, your vendors' systems and your SCE stay where they
+        are. Most of it is built once, and the rest is shaped to each study with your data managers.
+      </p>
+      <dl class="cdr-scope">
+        {scope.map(s => (
+          <div class="cdr-scope-row">
+            <dt>{s.term}</dt>
+            <dd>{s.body}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+    <aside class="cdr-platform">
+      <div class="cdr-label">Built on Databricks features</div>
+      <ul>
+        {platform.map(p => (
+          <li>
+            <strong>{p.name}</strong>
+            <span>{p.use}</span>
+          </li>
+        ))}
+      </ul>
+    </aside>
+  </div>
+
+  <!-- Questions -->
+  <div class="section-pale">
+    <div class="section cdr-faq-section">
+      <div>
+        <span class="overline">Questions</span>
+        <h2>What sponsors ask first</h2>
+      </div>
+      <div class="cdr-faqs">
+        {faqs.map(f => (
+          <details class="cdr-faq">
+            <summary>{f.q}</summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-banner">
+    <h2>See it run on a study, start to finish</h2>
+    <p>
+      The demo takes about 40 minutes. It covers two transfers from four sources, the discrepancies
+      they raise, and an SCE reading the result in place.
+    </p>
+    <div class="hero-actions">
+      <a href="contact" class="btn btn-teal">Request a demo</a>
+      <a href="solutions/sce-scoping" class="cdr-cta-link">Planning an SCE as well? See the 12-Week SCE Blueprint</a>
+    </div>
+  </div>
+
+</PageLayout>
+
+<style>
+  .cdr-hero--image {
+    background-image:
+      linear-gradient(rgba(0, 31, 46, 0.82), rgba(0, 31, 46, 0.82)),
+      var(--cdr-hero-bg);
+    background-size: cover;
+    background-position: center;
+  }
+
+  .overline {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--space-2);
+  }
+
+  .cdr-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--space-3);
+    display: block;
+  }
+
+  .intro-para {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--color-slate-gray);
+  }
+
+  .cdr-lede {
+    max-width: 720px;
+    margin-bottom: 0;
+  }
+
+  /* Problem */
+  .cdr-intro {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: var(--space-16);
+    align-items: start;
+  }
+
+  .cdr-reg-block {
+    background: var(--color-primary);
+    border-radius: 0.75rem;
+    padding: var(--space-8);
+    box-shadow: 0 2px 6px rgba(29, 47, 61, 0.08), 0 12px 32px rgba(29, 47, 61, 0.14);
+  }
+
+  .cdr-reg-block p {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  .cdr-reg-block a {
+    color: #7ecfee;
+    font-weight: 600;
+  }
+
+  .cdr-reg-block a:hover,
+  .cdr-reg-block a:focus-visible { color: #fff; }
+
+  .cdr-problems {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-6);
+    margin-top: var(--space-8);
+  }
+
+  .cdr-problem {
+    border-top: 3px solid var(--color-accent);
+    padding-top: var(--space-4);
+  }
+
+  .cdr-problem h3 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-2);
+  }
+
+  .cdr-problem p {
+    font-size: 0.9rem;
+    line-height: 1.65;
+    color: var(--color-slate-gray);
+    margin: 0;
+  }
+
+  /* Flow diagram: sources, the study catalog, readers */
+  .cdr-flow {
+    margin-top: var(--space-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .cdr-flow-heading {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-slate-gray);
+    margin-bottom: var(--space-3);
+  }
+
+  .cdr-flow-heading--light { color: rgba(255, 255, 255, 0.6); }
+
+  .cdr-chips {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .cdr-chips--4 { grid-template-columns: repeat(4, 1fr); }
+  .cdr-chips--3 { grid-template-columns: repeat(3, 1fr); }
+
+  .cdr-chip {
+    background: var(--color-surface);
+    border: 1px solid rgba(178, 209, 234, 0.6);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .cdr-chip strong {
+    color: var(--color-slate);
+    font-size: 0.95rem;
+    line-height: 1.3;
+  }
+
+  .cdr-chip span {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-slate-gray);
+  }
+
+  .cdr-flow-arrow {
+    display: flex;
+    justify-content: center;
+    color: var(--color-blue-mid);
+  }
+
+  .cdr-core {
+    background: var(--color-slate);
+    background-image:
+      radial-gradient(circle at 12% 0%, rgba(60, 157, 204, 0.18) 0%, transparent 50%),
+      radial-gradient(circle at 92% 100%, rgba(14, 168, 152, 0.12) 0%, transparent 45%);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);
+    box-shadow: 0 2px 6px rgba(29, 47, 61, 0.1), 0 18px 44px rgba(29, 47, 61, 0.22);
+  }
+
+  .cdr-stages {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 2px solid rgba(255, 255, 255, 0.16);
+  }
+
+  .cdr-stage {
+    position: relative;
+    padding: var(--space-6) var(--space-6) 0 0;
+  }
+
+  .cdr-stage + .cdr-stage { padding-left: var(--space-6); border-left: 1px solid rgba(255, 255, 255, 0.1); }
+
+  .cdr-stage:last-child { padding-right: 0; }
+
+  /* Marker on the rail above each stage */
+  .cdr-stage::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-blue);
+    box-shadow: 0 0 0 4px var(--color-slate);
+  }
+
+  .cdr-stage + .cdr-stage::before { left: var(--space-6); }
+
+  .cdr-stage-num {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-blue-mid);
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+
+  .cdr-stage h3 {
+    color: #fff;
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .cdr-stage p {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.9rem;
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  .cdr-core-note {
+    margin: var(--space-8) 0 0;
+    padding-top: var(--space-4);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-blue-pale);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  /* Features */
+  .cdr-features {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-12);
+    margin-top: var(--space-10);
+  }
+
+  /* The screenshots are wide, so the image column gets the larger share */
+  .cdr-feature {
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+    gap: var(--space-12);
+    align-items: center;
+  }
+
+  .cdr-feature--reverse { grid-template-columns: 7fr 5fr; }
+
+  .cdr-feature--reverse .cdr-feature-text { order: 2; }
+
+  .cdr-feature-text h3 {
+    font-size: var(--text-2xl);
+    letter-spacing: -0.02em;
+    margin-bottom: var(--space-3);
+  }
+
+  .cdr-feature-text p {
+    color: var(--color-slate-gray);
+    line-height: 1.7;
+  }
+
+  .cdr-pipeline { margin-top: var(--space-10); }
+
+  .cdr-feature-media img,
+  .cdr-pipeline img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(178, 209, 234, 0.5);
+    box-shadow:
+      0 2px 6px rgba(29, 47, 61, 0.06),
+      0 16px 40px rgba(29, 47, 61, 0.14);
+  }
+
+  /* Screenshot placeholder, shown until the image file exists */
+  .cdr-shot {
+    aspect-ratio: 16 / 10;
+    border: 2px dashed var(--color-blue-pale);
+    border-radius: 0.75rem;
+    background-color: var(--color-surface);
+    background-image:
+      linear-gradient(rgba(178, 209, 234, 0.22) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(178, 209, 234, 0.22) 1px, transparent 1px);
+    background-size: 28px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-6);
+    text-align: center;
+  }
+
+  .cdr-shot-tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-teal);
+  }
+
+  .cdr-shot strong {
+    color: var(--color-slate);
+    font-size: var(--text-lg);
+    line-height: 1.3;
+    max-width: 30ch;
+  }
+
+  .cdr-shot code {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-slate-gray);
+    background: var(--color-bg);
+    border: 1px solid var(--color-blue-pale);
+    border-radius: var(--radius-sm);
+    padding: 0.2em 0.6em;
+    overflow-wrap: anywhere;
+  }
+
+  .cdr-list {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-4) 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .cdr-list li {
+    font-size: 0.925rem;
+    line-height: 1.55;
+    color: var(--color-slate-gray);
+    padding-left: 1.25rem;
+    position: relative;
+  }
+
+  .cdr-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-accent);
+  }
+
+  /* Who benefits */
+  .cdr-audiences { margin-top: var(--space-8); }
+
+  .cdr-audiences .card p {
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  /* How it fits */
+  .cdr-fit {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: var(--space-16);
+    align-items: start;
+  }
+
+  .cdr-fit p {
+    color: var(--color-slate-gray);
+    line-height: 1.7;
+  }
+
+  .cdr-scope { margin: var(--space-8) 0 0; }
+
+  .cdr-scope-row {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    gap: var(--space-6);
+    padding: var(--space-4) 0;
+    border-top: 1px solid var(--color-blue-pale);
+  }
+
+  .cdr-scope-row:last-child { border-bottom: 1px solid var(--color-blue-pale); }
+
+  .cdr-scope dt {
+    font-weight: 700;
+    color: var(--color-slate);
+    line-height: 1.4;
+  }
+
+  .cdr-scope dd {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: var(--color-slate-gray);
+  }
+
+  .cdr-platform {
+    background: var(--color-primary);
+    border-radius: 0.75rem;
+    padding: var(--space-8);
+    box-shadow: 0 2px 6px rgba(29, 47, 61, 0.08), 0 12px 32px rgba(29, 47, 61, 0.14);
+  }
+
+  .cdr-platform ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .cdr-platform li {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: var(--space-3) 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .cdr-platform li:last-child { padding-bottom: 0; }
+
+  .cdr-platform strong {
+    color: #fff;
+    font-size: 0.95rem;
+  }
+
+  .cdr-platform span {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  /* Questions */
+  .cdr-faq-section {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: var(--space-16);
+    align-items: start;
+  }
+
+  .cdr-faq { border-top: 1px solid var(--color-blue-pale); }
+
+  .cdr-faq:last-child { border-bottom: 1px solid var(--color-blue-pale); }
+
+  .cdr-faq summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) 0;
+    font-weight: 700;
+    font-size: var(--text-lg);
+    letter-spacing: -0.01em;
+    color: var(--color-slate);
+    transition: color 0.15s ease;
+  }
+
+  .cdr-faq summary::-webkit-details-marker { display: none; }
+
+  .cdr-faq summary::after {
+    content: '+';
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--color-accent);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .cdr-faq[open] summary::after { transform: rotate(45deg); }
+
+  .cdr-faq summary:hover { color: var(--color-accent); }
+
+  .cdr-faq summary:active { color: var(--color-teal); }
+
+  .cdr-faq summary:focus-visible {
+    outline: 2px solid var(--color-teal);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  .cdr-faq p {
+    color: var(--color-slate-gray);
+    line-height: 1.7;
+    margin: 0;
+    padding: 0 var(--space-8) var(--space-6) 0;
+    max-width: 62ch;
+  }
+
+  /* CTA */
+  .cta-banner .hero-actions { align-items: center; }
+
+  .cdr-cta-link {
+    color: var(--color-blue-pale);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.15s ease;
+  }
+
+  .cdr-cta-link:hover,
+  .cdr-cta-link:focus-visible { color: #fff; }
+
+  .cdr-cta-link:active { color: var(--color-blue-mid); }
+
+  .cdr-cta-link:focus-visible {
+    outline: 2px solid var(--color-teal);
+    outline-offset: 3px;
+    border-radius: var(--radius-sm);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cdr-faq summary,
+    .cdr-faq summary::after,
+    .cdr-cta-link { transition: none; }
+  }
+
+  @media (max-width: 960px) {
+    .cdr-problems,
+    .cdr-chips--4 { grid-template-columns: repeat(2, 1fr); }
+
+    .cdr-stages {
+      grid-template-columns: repeat(2, 1fr);
+      row-gap: var(--space-8);
+      border-top: none;
+    }
+
+    .cdr-stage,
+    .cdr-stage + .cdr-stage {
+      padding: var(--space-4) var(--space-6) 0 0;
+      border-left: none;
+      border-top: 2px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .cdr-stage + .cdr-stage::before { left: 0; }
+  }
+
+  @media (max-width: 768px) {
+    .cdr-intro,
+    .cdr-feature,
+    .cdr-fit,
+    .cdr-faq-section { grid-template-columns: 1fr; gap: var(--space-8); }
+
+    .cdr-feature--reverse .cdr-feature-text { order: 0; }
+
+    .cdr-chips--3 { grid-template-columns: 1fr; }
+
+    .cdr-core { padding: var(--space-6); }
+
+    .cdr-scope-row { grid-template-columns: 1fr; gap: var(--space-1); }
+  }
+
+  @media (max-width: 520px) {
+    .cdr-problems,
+    .cdr-chips--4,
+    .cdr-stages { grid-template-columns: 1fr; }
+
+    .cdr-stage,
+    .cdr-stage + .cdr-stage { padding-right: 0; }
+  }
+</style>

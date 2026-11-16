@@ -156,8 +156,10 @@ ul, ol {
   padding: 0 var(--space-6);
 }
 
+/* Sections share one page background, so the padding of two adjacent sections
+   adds up to a single visible gap: 4rem on phones, 5rem from tablet up. */
 .section {
-  padding: var(--space-10) var(--space-6);
+  padding: var(--space-8) var(--space-6);
   max-width: var(--max-width);
   margin: 0 auto;
 }
@@ -186,7 +188,7 @@ ul, ol {
 
 @media (min-width: 768px) {
   .section {
-    padding: var(--space-12) var(--space-8);
+    padding: var(--space-10) var(--space-8);
   }
 
   .grid-2 {
@@ -199,10 +201,6 @@ ul, ol {
 }
 
 @media (min-width: 1024px) {
-  .section {
-    padding: var(--space-16) var(--space-8);
-  }
-
   .grid-3 {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -655,6 +653,53 @@ ul, ol {
   gap: var(--space-4);
   justify-content: center;
   flex-wrap: wrap;
+}
+
+/* "Built on <partner logo>" lockup under the hero actions */
+.hero-built-on {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-10);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.hero-built-on span {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-blue-pale);
+}
+
+.hero-built-on img {
+  height: 26px;
+  width: auto;
+}
+
+.hero-built-on:hover,
+.hero-built-on:focus-visible {
+  opacity: 1;
+  text-decoration: none;
+}
+
+.hero-built-on:active {
+  opacity: 0.7;
+}
+
+.hero-built-on:focus-visible {
+  outline: 2px solid var(--color-teal);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-built-on {
+    transition: none;
+  }
 }
 
 /* ============================================================
