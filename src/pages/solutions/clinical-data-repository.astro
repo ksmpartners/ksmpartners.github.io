@@ -13,11 +13,12 @@ const howItWorks = `${Astro.url.pathname}#how-it-works`;
   .jpg also work). The page picks it up on the next build; no code change is needed.
 
   hero            optional, sits behind the hero under a dark overlay
-  study-overview  study dashboard, Study overview page
-  what-changed    notebook 2_what_changed, step 1 results
+  pipeline        optional, the unify pipeline graph, shown under the flow diagram
+  study-overview  study dashboard, Study overview page (Transfers table)
+  what-changed    changed values from the second transfers
   discrepancies   study dashboard, Discrepancies page, Status set to All
-  data-cuts       study dashboard, Data cuts page with a cut selected
-  sce-read        the SCE session after read_cdr.R has run
+  data-cuts       study dashboard, Data cuts page (crop out the Released by column)
+  sce-read        the SCE session reading a pinned data cut
 */
 const imageDir = 'images/clinical-data-repository';
 // Only the file names are read here; the images are served from public/ as usual.
@@ -28,6 +29,7 @@ const findImage = (name: string) => {
 };
 
 const heroImage = findImage('hero');
+const pipelineImage = findImage('pipeline');
 
 const problems = [
   { title: 'Many sources, many formats', body: 'Reconciliation has to span every EDC, lab and vendor, each with its own file layout and its own visit numbering.' },
@@ -68,7 +70,7 @@ const features = [
     ],
     image: 'study-overview',
     capture: 'Study dashboard, Study overview page',
-    alt: 'Study dashboard listing each data source with its last transfer and the open discrepancies',
+    alt: 'Transfers table listing each source with its last transfer date, its status, and its open, opened and closed discrepancy counts',
   },
   {
     label: 'Change over time',
@@ -80,8 +82,8 @@ const features = [
       'Reviewers start with the 48 records that changed',
     ],
     image: 'what-changed',
-    capture: 'Notebook 2_what_changed, step 1 results',
-    alt: 'Query results listing new and changed records for each source in the second transfer',
+    capture: 'Changed values from the second transfers',
+    alt: 'Five lab results listed with their old and new values, each resent without an update flag',
   },
   {
     label: 'Review evidence',
@@ -94,7 +96,7 @@ const features = [
     ],
     image: 'discrepancies',
     capture: 'Study dashboard, Discrepancies page, Status set to All',
-    alt: 'Discrepancies page filtered to the central lab, listing open and closed discrepancies with the check that raised each one',
+    alt: 'Central lab discrepancies with their status, the dates each one opened and closed, and the check that raised it',
   },
   {
     label: 'Data cuts',
@@ -107,7 +109,7 @@ const features = [
     ],
     image: 'data-cuts',
     capture: 'Study dashboard, Data cuts page with a cut selected',
-    alt: 'Data cuts page showing released cuts with who released them, the pipeline run, the code commit and the included files',
+    alt: 'Released data cuts with their as-of date, pipeline run and code commit, above the list of files included in a cut',
   },
   {
     label: 'SCE hand-off',
@@ -119,7 +121,7 @@ const features = [
       'Every table names the team that owns it, and the SCE\'s reads are logged',
     ],
     image: 'sce-read',
-    capture: 'The SCE session after read_cdr.R has run',
+    capture: 'The SCE session reading a pinned data cut',
     alt: 'The demographics table open in Positron, read from a pinned data cut with 219 rows',
   },
 ].map(f => ({ ...f, src: findImage(f.image) }));
@@ -274,6 +276,19 @@ const faqs = [
           </ul>
         </div>
       </div>
+
+      {pipelineImage && (
+        <figure class="cdr-pipeline">
+          <img
+            src={pipelineImage}
+            alt="Pipeline graph in Databricks with source tables from two EDCs, the central lab and IRT feeding unified tables and subject reconciliation"
+            loading="lazy"
+          />
+          <figcaption class="image-caption">
+            The Unified stage as it runs in Databricks, ending in subject reconciliation
+          </figcaption>
+        </figure>
+      )}
     </div>
   </div>
 
@@ -627,12 +642,15 @@ const faqs = [
     margin-top: var(--space-10);
   }
 
+  /* The screenshots are wide, so the image column gets the larger share */
   .cdr-feature {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 5fr 7fr;
     gap: var(--space-12);
     align-items: center;
   }
+
+  .cdr-feature--reverse { grid-template-columns: 7fr 5fr; }
 
   .cdr-feature--reverse .cdr-feature-text { order: 2; }
 
@@ -647,7 +665,10 @@ const faqs = [
     line-height: 1.7;
   }
 
-  .cdr-feature-media img {
+  .cdr-pipeline { margin-top: var(--space-10); }
+
+  .cdr-feature-media img,
+  .cdr-pipeline img {
     display: block;
     width: 100%;
     height: auto;
