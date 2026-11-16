@@ -175,6 +175,10 @@ const faqs = [
       <a href="contact" class="btn btn-teal">Request a demo</a>
       <a href={howItWorks} class="btn btn-outline">See how it works</a>
     </div>
+    <a href="our-partners" class="cdr-built-on">
+      <span>Built on</span>
+      <img src={`${base}images/partners/databricks-white.svg`} alt="Databricks" width="713" height="113" />
+    </a>
   </section>
 
   <!-- Problem -->
@@ -397,6 +401,55 @@ const faqs = [
     background-position: center;
   }
 
+  .cdr-built-on {
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-10);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+  }
+
+  .cdr-built-on span {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-blue-pale);
+  }
+
+  .cdr-built-on img {
+    height: 26px;
+    width: auto;
+  }
+
+  .cdr-built-on:hover,
+  .cdr-built-on:focus-visible { opacity: 1; text-decoration: none; }
+
+  .cdr-built-on:active { opacity: 0.7; }
+
+  .cdr-built-on:focus-visible {
+    outline: 2px solid var(--color-teal);
+    outline-offset: 2px;
+  }
+
+  /* Every section on this page shares one background, so the global section
+     padding, doubled where two sections meet, reads as an empty gap. */
+  .section {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-8);
+  }
+
+  @media (min-width: 768px) {
+    .section {
+      padding-top: var(--space-10);
+      padding-bottom: var(--space-10);
+    }
+  }
+
   .overline {
     display: block;
     font-size: 0.75rem;
@@ -462,7 +515,7 @@ const faqs = [
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-6);
-    margin-top: var(--space-10);
+    margin-top: var(--space-8);
   }
 
   .cdr-problem {
@@ -484,7 +537,7 @@ const faqs = [
 
   /* Flow diagram: sources, the study catalog, readers */
   .cdr-flow {
-    margin-top: var(--space-10);
+    margin-top: var(--space-8);
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
@@ -619,8 +672,8 @@ const faqs = [
   .cdr-features {
     display: flex;
     flex-direction: column;
-    gap: var(--space-16);
-    margin-top: var(--space-12);
+    gap: var(--space-12);
+    margin-top: var(--space-10);
   }
 
   .cdr-feature {
@@ -893,7 +946,8 @@ const faqs = [
   @media (prefers-reduced-motion: reduce) {
     .cdr-faq summary,
     .cdr-faq summary::after,
-    .cdr-cta-link { transition: none; }
+    .cdr-cta-link,
+    .cdr-built-on { transition: none; }
   }
 
   @media (max-width: 960px) {
