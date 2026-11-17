@@ -8,15 +8,15 @@ const howItWorks = `${Astro.url.pathname}#how-it-works`;
 /*
   Screenshots
   -----------
-  Each slot below shows a labelled placeholder until its image exists. To fill one,
-  save the screenshot as public/images/clinical-data-repository/<name>.webp (.png and
-  .jpg also work). The page picks it up on the next build; no code change is needed.
+  Each feature slot shows a labelled placeholder until its image exists. To fill or
+  replace one, save the image as public/images/clinical-data-repository/<name>.webp
+  (.png and .jpg also work). The page picks it up on the next build.
 
   hero            optional, sits behind the hero under a dark overlay
-  pipeline        optional, the unify pipeline graph, shown under the flow diagram
+  pipeline        optional, the pipeline graph, shown under the four steps
   study-overview  study dashboard, Study overview page (Transfers table)
-  what-changed    changed values from the second transfers
-  discrepancies   study dashboard, Discrepancies page, Status set to All
+  what-changed    values that changed between transfers
+  discrepancies   study dashboard, Discrepancies page
   data-cuts       study dashboard, Data cuts page (crop out the Released by column)
   sce-read        the SCE session reading a pinned data cut
 */
@@ -32,41 +32,27 @@ const heroImage = findImage('hero');
 const pipelineImage = findImage('pipeline');
 
 const problems = [
-  { title: 'Many sources, many formats', body: 'Reconciliation has to span every EDC, lab and vendor, each with its own file layout and its own visit numbering.' },
-  { title: 'Data that keeps changing', body: 'Sites correct entries and vendors resend files for the whole study. It is hard to see what changed between one transfer and the next.' },
-  { title: 'Review evidence built by hand', body: 'Review plans hold hundreds of checks. Proving each one ran is manual work, and what slips through surfaces in statistics or as a wave of site queries right before lock.' },
-  { title: 'A copy at every hand-off', body: 'Each hand-off to an SCE or a CRO creates another copy to move, validate and keep in sync. It also makes it harder to show who changed what.' },
+  { title: 'Reconciling every source', body: 'Every EDC, lab and vendor uses its own format and conventions. A subject or sample that does not match across them can go unnoticed for months.' },
+  { title: 'Changes nobody flagged', body: 'Sites correct entries and vendors resend files for the whole study. A value that changed without notice can reach statistics before anyone sees it.' },
+  { title: 'Review evidence built by hand', body: 'Review plans hold hundreds of checks. Proving each one ran is manual work, and what slips through comes back as a wave of site queries right before lock.' },
+  { title: 'A copy at every hand-off', body: 'Each hand-off to an SCE or a CRO creates another copy to move, validate and keep in sync, and makes it harder to show who changed what.' },
 ];
 
-const sources = [
-  { name: 'EDC', detail: 'ODM-XML' },
-  { name: 'Second EDC or CRO', detail: 'Vendor CSV' },
-  { name: 'Central lab', detail: 'CDISC LAB model' },
-  { name: 'IRT', detail: 'Randomization and kits' },
-];
-
-const stages = [
-  { title: 'Received', body: 'The pipeline starts when files land, with no schedule and no button. Each file is kept exactly as the source sent it and tagged with its transfer.' },
-  { title: 'Unified', body: 'Every source maps to one model with columns named by CDASH, so a check is written once and runs against all of them. Subjects are matched to IRT enrollment, and fields the model has no column for stay on the record.' },
-  { title: 'Checked', body: 'Review plan and transfer agreement checks run as SQL rules on every transfer. What they raise is recorded as discrepancies, each with the dates it opened and closed.' },
-  { title: 'Read in place', body: 'Your SCE reads the collected data with read-only access, live or pinned to a released data cut. Nothing is exported or copied.' },
-];
-
-const readers = [
-  { name: 'Your SCE', detail: 'R, SAS or Python over ODBC' },
-  { name: 'Data managers', detail: 'The study dashboard' },
-  { name: 'Auditors and QA', detail: 'From a data cut to its code and files' },
+const steps = [
+  { title: 'Received', body: 'Your EDCs, labs and vendors keep sending files the way they do today. Every transfer is kept exactly as it arrived.' },
+  { title: 'Brought together', body: 'Each source is mapped into one view of the study, and every subject is matched against enrollment.' },
+  { title: 'Checked', body: 'Your review plan and transfer agreement checks run on each transfer. Every discrepancy is tracked from the day it opens to the day it closes.' },
+  { title: 'Read in place', body: 'Statistical programming reads the same copy from the SCE, live or pinned to a released data cut.' },
 ];
 
 const features = [
   {
     label: 'Study overview',
     title: 'Has every source delivered, and what is open?',
-    body: 'The study dashboard is the data manager\'s morning view. It lists each expected source with its last transfer and counts the discrepancies opened and closed since.',
+    body: 'Your data managers start the day with the state of the study in one view: which sources have delivered, which are behind, and how many discrepancies opened and closed with the last transfer.',
     bullets: [
-      'In the demo, the first transfers raise a randomized, dosed subject that one EDC never sent',
-      'Open discrepancies by check, source and site show where to focus',
-      'A standard Databricks AI/BI dashboard, with no custom application code',
+      'A subject missing from one source comes to light months before lock',
+      'Open discrepancies by source and site show where to focus',
     ],
     image: 'study-overview',
     capture: 'Study dashboard, Study overview page',
@@ -75,50 +61,49 @@ const features = [
   {
     label: 'Change over time',
     title: 'What changed since the last transfer?',
-    body: 'Each transfer is compared with the last one as it loads, and every version of every value is kept. The demo\'s second transfers bring 23,180 new lab results and 48 changed records, and nobody compares files to find them.',
+    body: 'Every transfer is compared with the one before it, and every version of every value is kept. Your team sees what is new and what changed without comparing files.',
     bullets: [
-      'EDC corrections carry who, when and why from the audit trail',
-      'Five lab values changed with no update flag, and each is raised against the transfer agreement',
-      'Reviewers start with the 48 records that changed',
+      'A value a vendor changed without flagging it is caught the day the file arrives',
+      'EDC corrections keep who made them, when and why',
+      'Review time goes to the records that changed',
     ],
     image: 'what-changed',
-    capture: 'Changed values from the second transfers',
+    capture: 'Values that changed between transfers',
     alt: 'Five lab results listed with their old and new values, each resent without an update flag',
   },
   {
     label: 'Review evidence',
     title: 'Did the check run, and when did the discrepancy close?',
-    body: 'Each check is a SQL rule with its description in plain English, listed by its review plan or transfer agreement ID. What it raises is stored with the date it opened and the date it closed.',
+    body: 'Checks from your data review plan and your transfer agreements run against every transfer. Each discrepancy is recorded with the date it opened and the date it closed, so the evidence builds while the study runs.',
     bullets: [
-      'Filter discrepancies by status, source, check and site',
-      'Checks only read the clinical data, and their results live in separate tables',
+      'Show an inspector that a check ran and what it raised',
+      'Issues come to light during the study, well ahead of lock',
       'Your data managers decide which checks each study runs',
     ],
     image: 'discrepancies',
-    capture: 'Study dashboard, Discrepancies page, Status set to All',
+    capture: 'Study dashboard, Discrepancies page',
     alt: 'Central lab discrepancies with their status, the dates each one opened and closed, and the check that raised it',
   },
   {
     label: 'Data cuts',
     title: 'Which data did this analysis use?',
-    body: 'A data cut is a named date on the study\'s history. Releasing one records who released it, when, the row counts and a fingerprint of each table, and it copies nothing. A program pinned to a cut gets the same numbers next month, whatever has arrived since.',
+    body: 'A data cut names the state of the study on a given date, across every source. An analysis pinned to a cut returns the same numbers next month, whatever has arrived since.',
     bullets: [
-      'Each cut links to the pipeline run that produced it and the commit of the code that ran',
-      'Every file in the cut is listed with its transfer and the run that loaded it',
-      'Moving an analysis to a newer cut is a one-line change',
+      'Each release records who released it and when',
+      'An auditor can trace a cut back to its files and the code that built it without asking anyone',
     ],
     image: 'data-cuts',
-    capture: 'Study dashboard, Data cuts page with a cut selected',
+    capture: 'Study dashboard, Data cuts page',
     alt: 'Released data cuts with their as-of date, pipeline run and code commit, above the list of files included in a cut',
   },
   {
     label: 'SCE hand-off',
     title: 'Can programming start without another copy?',
-    body: 'The SCE connects through the Databricks ODBC driver and a SQL warehouse, so R, SAS and Python all read the same tables in place. Its identity can read the collected data and nothing else.',
+    body: 'Your SCE reads the study data where it lives, from R, SAS or Python. There is no export to move, validate and keep in sync.',
     bullets: [
-      'Column labels travel with the data, the way a SAS dataset carries them',
-      'Treatment arm and kit data stay out of the schema the SCE reads',
-      'Every table names the team that owns it, and the SCE\'s reads are logged',
+      'Works with the SCE you already run',
+      'Access is read-only, and treatment arm and kit data are kept out of what the SCE can see',
+      'Every table names the team that owns it',
     ],
     image: 'sce-read',
     capture: 'The SCE session reading a pinned data cut',
@@ -127,34 +112,14 @@ const features = [
 ].map(f => ({ ...f, src: findImage(f.image) }));
 
 const audiences = [
-  { title: 'Clinical data management', body: 'Reconcile vendor data the day it arrives and raise a missing subject months before lock. Review time goes to the values that changed.' },
+  { title: 'Clinical data management', body: 'Reconcile vendor data the day it arrives, and spend review time on the values that changed. A missing subject is raised months before lock.' },
   { title: 'Statistical programming', body: 'Start programming with no extra copy to move or validate. Pin a program to a data cut and rerun it next month for the same numbers.' },
-  { title: 'Quality and inspection readiness', body: 'Show an inspector who owned the data at each stage, who released a cut and how it was built. The path from a cut to its code and files needs no request to anyone.' },
-  { title: 'Data strategy and IT', body: 'There are fewer hops between systems and one copy to protect. Each study\'s environment is built from code in a repository, so it can be rebuilt from a commit.' },
+  { title: 'Quality and inspection readiness', body: 'Show an inspector who owned the data at each stage, who released a cut and what went into it, without a request to anyone.' },
+  { title: 'Clinical operations', body: 'See which sources are behind and which sites carry the open discrepancies while there is still time to act.' },
+  { title: 'Data strategy and IT', body: 'One copy of the study, fewer transfers between systems, and nothing to replace. It runs on Databricks alongside the EDC, vendors and SCE you already have.' },
 ];
 
-const scope = [
-  { term: 'Built once, by KSM', body: 'The platform itself: intake, history, checks, data cuts, the study dashboard and the SCE hand-off.' },
-  { term: 'Once per source format', body: 'ODM-XML and the CDISC LAB model carry over between studies. A vendor\'s own CSV layout needs its own ingestion and mapping.' },
-  { term: 'For each study', body: 'Study configuration and the review plan checks. Your data managers decide what they are, and KSM builds the first study with you.' },
-];
-
-const platform = [
-  { name: 'File arrival trigger', use: 'starts the pipeline when files land' },
-  { name: 'Auto Loader', use: 'reads each file once, as sent' },
-  { name: 'AUTO CDC', use: 'keeps every version of every value' },
-  { name: 'Unity Catalog', use: 'grants, owner tags, lineage and the audit log' },
-  { name: 'AI/BI dashboards', use: 'the study dashboard' },
-  { name: 'Serverless SQL warehouse', use: 'the read path for any ODBC client' },
-];
-
-const faqs = [
-  { q: 'Does it replace our EDC?', a: 'No. It takes what your EDCs and vendors already send and works alongside them. The demo study runs two EDCs with different visit numbering, coding and file formats, and the pipeline is tuned to neither.' },
-  { q: 'Will it work with our vendors\' files?', a: 'The demo ingests ODM-XML, the CDISC LAB model and vendor-style CSV. A real export will differ in detail, and a format we have not seen means new ingestion and mapping for that feed. Each feed\'s layout comes from its data transfer agreement.' },
-  { q: 'Is the data SDTM?', a: 'No. In CDISC terms it is collected data, named by CDASH, and it is the input to your SDTM programs. Generating SDTM from it is the next phase of our work.' },
-  { q: 'Which SCEs can read it?', a: 'Any SCE that runs R, Python or SAS and can use the Databricks ODBC driver. Nothing in the repository changes from one SCE to another.' },
-  { q: 'Is it validated?', a: 'Not formally. Every environment is built from a commit, and every change is logged with the commit it ran from. That gives validation a starting point.' },
-];
+const fits = ['EDC', 'CRO', 'Central lab', 'IRT', 'SCE'];
 ---
 <PageLayout
   title="Clinical Data Repository on Databricks"
@@ -191,9 +156,10 @@ const faqs = [
         <h2>Most of your study data never passes through the EDC</h2>
         <p class="intro-para">
           Central labs, IRT, eCOA and other vendors each send data in their own format, and many
-          studies run more than one EDC across in-house and CRO work. At the SCDM conference in
-          September 2026, speakers put the share of study data outside the EDC at about 70% and
-          named vendor data the leading cause of end-of-study delay.
+          studies run more than one EDC across in-house and CRO work. Speakers at the SCDM
+          conference in September 2026 put the share of study data outside the EDC at about 70%,
+          and named vendor data the leading cause of end-of-study delay. Problems in that data
+          tend to surface late, in statistics or in the rush before database lock.
         </p>
       </div>
       <aside class="cdr-reg-block">
@@ -201,8 +167,8 @@ const faqs = [
         <p>
           <a href={e6r3} target="_blank" rel="noopener noreferrer">E6(R3)</a> asks for oversight in
           proportion to risk, defined critical-to-quality factors, and evidence of who owns the data
-          at each stage and how it was transferred and transformed. The repository records that
-          evidence as each transfer is processed.
+          at each stage and how it was transferred and transformed. The repository helps you build
+          that evidence from the first transfer.
         </p>
       </aside>
     </div>
@@ -221,71 +187,28 @@ const faqs = [
     <div class="section">
       <span class="overline">How it works</span>
       <h2>One copy of the study, from vendor file to SCE</h2>
-      <p class="intro-para cdr-lede">
-        Each study gets its own catalog on Databricks. A transfer moves through four stages inside
-        it, starting when the files land.
-      </p>
 
-      <div class="cdr-flow">
-        <div class="cdr-flow-row">
-          <span class="cdr-flow-heading">Your sources</span>
-          <ul class="cdr-chips cdr-chips--4">
-            {sources.map(s => (
-              <li class="cdr-chip">
-                <strong>{s.name}</strong>
-                <span>{s.detail}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div class="cdr-flow-arrow" aria-hidden="true">
-          <svg width="16" height="28" viewBox="0 0 16 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1v25M2 20l6 6 6-6" /></svg>
-        </div>
-
-        <div class="cdr-core">
-          <span class="cdr-flow-heading cdr-flow-heading--light">One catalog per study</span>
-          <ol class="cdr-stages">
-            {stages.map((s, i) => (
-              <li class="cdr-stage">
-                <span class="cdr-stage-num">{String(i + 1).padStart(2, '0')}</span>
-                <h3>{s.title}</h3>
-                <p>{s.body}</p>
-              </li>
-            ))}
-          </ol>
-          <p class="cdr-core-note">
-            Every version of every value is kept, with the transfer that brought it and the transfer
-            that replaced it.
-          </p>
-        </div>
-
-        <div class="cdr-flow-arrow" aria-hidden="true">
-          <svg width="16" height="28" viewBox="0 0 16 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1v25M2 20l6 6 6-6" /></svg>
-        </div>
-
-        <div class="cdr-flow-row">
-          <span class="cdr-flow-heading">Who reads it</span>
-          <ul class="cdr-chips cdr-chips--3">
-            {readers.map(r => (
-              <li class="cdr-chip">
-                <strong>{r.name}</strong>
-                <span>{r.detail}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div class="cdr-core">
+        <ol class="cdr-stages">
+          {steps.map((s, i) => (
+            <li class="cdr-stage">
+              <span class="cdr-stage-num">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{s.title}</h3>
+              <p>{s.body}</p>
+            </li>
+          ))}
+        </ol>
       </div>
 
       {pipelineImage && (
         <figure class="cdr-pipeline">
           <img
             src={pipelineImage}
-            alt="Pipeline graph in Databricks with source tables from two EDCs, the central lab and IRT feeding the unified tables, subject reconciliation and the record of changes"
+            alt="Pipeline graph in Databricks with data from two EDCs, a central lab and IRT flowing into one set of study tables"
             loading="lazy"
           />
           <figcaption class="image-caption">
-            The Unified stage as it runs in Databricks, ending in subject reconciliation and the record of changes
+            The pipeline behind those four steps, running in Databricks
           </figcaption>
         </figure>
       )}
@@ -296,10 +219,6 @@ const faqs = [
   <div class="section">
     <span class="overline">What you get</span>
     <h2>The questions it answers</h2>
-    <p class="intro-para cdr-lede">
-      The screens below come from our demo study: test data generated from the public CDISC pilot
-      study (306 subjects, 17 sites) and delivered as transfers from two EDCs, a central lab and IRT.
-    </p>
     <div class="cdr-features">
       {features.map((f, i) => (
         <div class={`cdr-feature${i % 2 ? ' cdr-feature--reverse' : ''}`}>
@@ -325,6 +244,7 @@ const faqs = [
         </div>
       ))}
     </div>
+    <p class="cdr-note">Screens show generated study data.</p>
   </div>
 
   <!-- Who benefits -->
@@ -332,7 +252,7 @@ const faqs = [
     <div class="section">
       <span class="overline">Who benefits</span>
       <h2>One copy, useful to every team that touches the data</h2>
-      <div class="grid-2 cdr-audiences">
+      <div class="grid-3 cdr-audiences">
         {audiences.map(a => (
           <div class="card">
             <h3>{a.title}</h3>
@@ -343,65 +263,28 @@ const faqs = [
     </div>
   </div>
 
-  <!-- How it fits -->
-  <div class="section cdr-fit">
+  <!-- Built for / CTA -->
+  <div class="section cdr-cta">
     <div>
-      <span class="overline">How it fits</span>
-      <h2>It works alongside the EDC, vendors and SCE you already have</h2>
+      <span class="overline">Built for</span>
+      <h2>Sponsors whose study data comes from more than one place</h2>
       <p>
-        The repository is a data layer. Your EDC, your vendors' systems and your SCE stay where they
-        are. Most of it is built once, and the rest is shaped to each study with your data managers.
+        The repository works alongside the EDC, vendors and SCE you already have, and replaces none
+        of them. It is built on Databricks, and KSM sets up each study's sources and checks with
+        your data managers.
       </p>
-      <dl class="cdr-scope">
-        {scope.map(s => (
-          <div class="cdr-scope-row">
-            <dt>{s.term}</dt>
-            <dd>{s.body}</dd>
-          </div>
-        ))}
-      </dl>
-    </div>
-    <aside class="cdr-platform">
-      <div class="cdr-label">Built on Databricks features</div>
-      <ul>
-        {platform.map(p => (
-          <li>
-            <strong>{p.name}</strong>
-            <span>{p.use}</span>
-          </li>
-        ))}
-      </ul>
-    </aside>
-  </div>
-
-  <!-- Questions -->
-  <div class="section-pale">
-    <div class="section cdr-faq-section">
-      <div>
-        <span class="overline">Questions</span>
-        <h2>What sponsors ask first</h2>
+      <div class="cdr-fits">
+        {fits.map(f => <span class="tag">{f}</span>)}
       </div>
-      <div class="cdr-faqs">
-        {faqs.map(f => (
-          <details class="cdr-faq">
-            <summary>{f.q}</summary>
-            <p>{f.a}</p>
-          </details>
-        ))}
+      <div class="hero-actions cdr-cta-actions">
+        <a href="contact" class="btn">Request a demo</a>
+        <a href="solutions/sce-scoping" class="btn btn-ghost">See the 12-Week SCE Blueprint</a>
       </div>
     </div>
-  </div>
-
-  <!-- CTA -->
-  <div class="cta-banner">
-    <h2>See it run on a study, start to finish</h2>
-    <p>
-      The demo takes about 40 minutes. It covers two transfers from four sources, the discrepancies
-      they raise, and an SCE reading the result in place.
-    </p>
-    <div class="hero-actions">
-      <a href="contact" class="btn btn-teal">Request a demo</a>
-      <a href="solutions/sce-scoping" class="cdr-cta-link">Planning an SCE as well? See the 12-Week SCE Blueprint</a>
+    <div class="cdr-cta-stat">
+      <span>KSM Technology Partners has over</span>
+      <strong>23 years</strong>
+      <span>building data-intensive systems for regulated industries.</span>
     </div>
   </div>
 
@@ -440,11 +323,6 @@ const faqs = [
     font-size: 1.05rem;
     line-height: 1.75;
     color: var(--color-slate-gray);
-  }
-
-  .cdr-lede {
-    max-width: 720px;
-    margin-bottom: 0;
   }
 
   /* Problem */
@@ -501,67 +379,9 @@ const faqs = [
     margin: 0;
   }
 
-  /* Flow diagram: sources, the study catalog, readers */
-  .cdr-flow {
-    margin-top: var(--space-8);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-4);
-  }
-
-  .cdr-flow-heading {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-slate-gray);
-    margin-bottom: var(--space-3);
-  }
-
-  .cdr-flow-heading--light { color: rgba(255, 255, 255, 0.6); }
-
-  .cdr-chips {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    gap: var(--space-4);
-  }
-
-  .cdr-chips--4 { grid-template-columns: repeat(4, 1fr); }
-  .cdr-chips--3 { grid-template-columns: repeat(3, 1fr); }
-
-  .cdr-chip {
-    background: var(--color-surface);
-    border: 1px solid rgba(178, 209, 234, 0.6);
-    border-radius: var(--radius-md);
-    padding: var(--space-3) var(--space-4);
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .cdr-chip strong {
-    color: var(--color-slate);
-    font-size: 0.95rem;
-    line-height: 1.3;
-  }
-
-  .cdr-chip span {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--color-slate-gray);
-  }
-
-  .cdr-flow-arrow {
-    display: flex;
-    justify-content: center;
-    color: var(--color-blue-mid);
-  }
-
+  /* How it works: four steps on one panel */
   .cdr-core {
+    margin-top: var(--space-8);
     background: var(--color-slate);
     background-image:
       radial-gradient(circle at 12% 0%, rgba(60, 157, 204, 0.18) 0%, transparent 50%),
@@ -589,7 +409,7 @@ const faqs = [
 
   .cdr-stage:last-child { padding-right: 0; }
 
-  /* Marker on the rail above each stage */
+  /* Marker on the rail above each step */
   .cdr-stage::before {
     content: '';
     position: absolute;
@@ -623,15 +443,6 @@ const faqs = [
     font-size: 0.9rem;
     line-height: 1.65;
     margin: 0;
-  }
-
-  .cdr-core-note {
-    margin: var(--space-8) 0 0;
-    padding-top: var(--space-4);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--color-blue-pale);
-    font-size: 0.9rem;
-    line-height: 1.6;
   }
 
   /* Features */
@@ -752,6 +563,14 @@ const faqs = [
     background: var(--color-accent);
   }
 
+  .cdr-note {
+    margin: var(--space-10) 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.04em;
+    color: var(--color-slate-gray);
+  }
+
   /* Who benefits */
   .cdr-audiences { margin-top: var(--space-8); }
 
@@ -760,170 +579,55 @@ const faqs = [
     margin: 0;
   }
 
-  /* How it fits */
-  .cdr-fit {
+  /* Built for / CTA */
+  .cdr-cta {
     display: grid;
     grid-template-columns: 3fr 2fr;
     gap: var(--space-16);
-    align-items: start;
+    align-items: center;
   }
 
-  .cdr-fit p {
+  .cdr-cta p {
     color: var(--color-slate-gray);
     line-height: 1.7;
   }
 
-  .cdr-scope { margin: var(--space-8) 0 0; }
-
-  .cdr-scope-row {
-    display: grid;
-    grid-template-columns: 11rem 1fr;
-    gap: var(--space-6);
-    padding: var(--space-4) 0;
-    border-top: 1px solid var(--color-blue-pale);
+  .cdr-fits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: var(--space-4) 0 var(--space-8);
   }
 
-  .cdr-scope-row:last-child { border-bottom: 1px solid var(--color-blue-pale); }
+  .cdr-cta-actions { justify-content: flex-start; }
 
-  .cdr-scope dt {
-    font-weight: 700;
-    color: var(--color-slate);
-    line-height: 1.4;
-  }
-
-  .cdr-scope dd {
-    margin: 0;
-    font-size: 0.95rem;
-    line-height: 1.65;
-    color: var(--color-slate-gray);
-  }
-
-  .cdr-platform {
+  .cdr-cta-stat {
     background: var(--color-primary);
-    border-radius: 0.75rem;
+    color: #fff;
+    border-radius: 1rem;
     padding: var(--space-8);
-    box-shadow: 0 2px 6px rgba(29, 47, 61, 0.08), 0 12px 32px rgba(29, 47, 61, 0.14);
-  }
-
-  .cdr-platform ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  .cdr-platform li {
+    text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: var(--space-3) 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 0.4rem;
   }
 
-  .cdr-platform li:last-child { padding-bottom: 0; }
-
-  .cdr-platform strong {
-    color: #fff;
-    font-size: 0.95rem;
-  }
-
-  .cdr-platform span {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.85rem;
+  .cdr-cta-stat span {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.75);
     line-height: 1.5;
   }
 
-  /* Questions */
-  .cdr-faq-section {
-    display: grid;
-    grid-template-columns: 2fr 3fr;
-    gap: var(--space-16);
-    align-items: start;
-  }
-
-  .cdr-faq { border-top: 1px solid var(--color-blue-pale); }
-
-  .cdr-faq:last-child { border-bottom: 1px solid var(--color-blue-pale); }
-
-  .cdr-faq summary {
-    list-style: none;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: var(--space-4);
-    padding: var(--space-4) 0;
-    font-weight: 700;
-    font-size: var(--text-lg);
-    letter-spacing: -0.01em;
-    color: var(--color-slate);
-    transition: color 0.15s ease;
-  }
-
-  .cdr-faq summary::-webkit-details-marker { display: none; }
-
-  .cdr-faq summary::after {
-    content: '+';
-    flex-shrink: 0;
-    font-family: var(--font-mono);
-    font-weight: 400;
-    font-size: 1.4rem;
-    line-height: 1;
+  .cdr-cta-stat strong {
+    font-size: 2.5rem;
+    font-weight: 800;
     color: var(--color-accent);
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .cdr-faq[open] summary::after { transform: rotate(45deg); }
-
-  .cdr-faq summary:hover { color: var(--color-accent); }
-
-  .cdr-faq summary:active { color: var(--color-teal); }
-
-  .cdr-faq summary:focus-visible {
-    outline: 2px solid var(--color-teal);
-    outline-offset: 2px;
-    border-radius: var(--radius-sm);
-  }
-
-  .cdr-faq p {
-    color: var(--color-slate-gray);
-    line-height: 1.7;
-    margin: 0;
-    padding: 0 var(--space-8) var(--space-6) 0;
-    max-width: 62ch;
-  }
-
-  /* CTA */
-  .cta-banner .hero-actions { align-items: center; }
-
-  .cdr-cta-link {
-    color: var(--color-blue-pale);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    transition: color 0.15s ease;
-  }
-
-  .cdr-cta-link:hover,
-  .cdr-cta-link:focus-visible { color: #fff; }
-
-  .cdr-cta-link:active { color: var(--color-blue-mid); }
-
-  .cdr-cta-link:focus-visible {
-    outline: 2px solid var(--color-teal);
-    outline-offset: 3px;
-    border-radius: var(--radius-sm);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .cdr-faq summary,
-    .cdr-faq summary::after,
-    .cdr-cta-link { transition: none; }
+    line-height: 1;
+    letter-spacing: -0.03em;
   }
 
   @media (max-width: 960px) {
-    .cdr-problems,
-    .cdr-chips--4 { grid-template-columns: repeat(2, 1fr); }
+    .cdr-problems { grid-template-columns: repeat(2, 1fr); }
 
     .cdr-stages {
       grid-template-columns: repeat(2, 1fr);
@@ -944,21 +648,15 @@ const faqs = [
   @media (max-width: 768px) {
     .cdr-intro,
     .cdr-feature,
-    .cdr-fit,
-    .cdr-faq-section { grid-template-columns: 1fr; gap: var(--space-8); }
+    .cdr-cta { grid-template-columns: 1fr; gap: var(--space-8); }
 
     .cdr-feature--reverse .cdr-feature-text { order: 0; }
 
-    .cdr-chips--3 { grid-template-columns: 1fr; }
-
     .cdr-core { padding: var(--space-6); }
-
-    .cdr-scope-row { grid-template-columns: 1fr; gap: var(--space-1); }
   }
 
   @media (max-width: 520px) {
     .cdr-problems,
-    .cdr-chips--4,
     .cdr-stages { grid-template-columns: 1fr; }
 
     .cdr-stage,
