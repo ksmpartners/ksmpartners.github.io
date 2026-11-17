@@ -118,8 +118,6 @@ const audiences = [
   { title: 'Clinical operations', body: 'See which sources are behind and which sites carry the open discrepancies while there is still time to act.' },
   { title: 'Data strategy and IT', body: 'One copy of the study, fewer transfers between systems, and nothing to replace. It runs on Databricks alongside the EDC, vendors and SCE you already have.' },
 ];
-
-const fits = ['EDC', 'CRO', 'Central lab', 'IRT', 'SCE'];
 ---
 <PageLayout
   title="Clinical Data Repository on Databricks"
@@ -263,19 +261,21 @@ const fits = ['EDC', 'CRO', 'Central lab', 'IRT', 'SCE'];
     </div>
   </div>
 
-  <!-- Built for / CTA -->
+  <!-- Where it leads / CTA -->
   <div class="section cdr-cta">
     <div>
-      <span class="overline">Built for</span>
-      <h2>Sponsors whose study data comes from more than one place</h2>
+      <span class="overline">Where it leads</span>
+      <h2>The first step toward an AI-driven future is one copy of the right data</h2>
       <p>
-        The repository works alongside the EDC, vendors and SCE you already have, and replaces none
-        of them. It is built on Databricks, and KSM sets up each study's sources and checks with
-        your data managers.
+        AI tools are only as good as the data underneath them. One copy of the right study data,
+        reachable in the right way by every team that needs it, is the first step toward using
+        them well, and the one that does the most. It gives you the traceability a submission asks
+        for today and a base for the AI-enabled SCE that comes next.
       </p>
-      <div class="cdr-fits">
-        {fits.map(f => <span class="tag">{f}</span>)}
-      </div>
+      <p>
+        That is also why the repository is built on Databricks. The data lake and the clinical data
+        repository no longer have to be two systems, with two copies and two sets of rules.
+      </p>
       <div class="hero-actions cdr-cta-actions">
         <a href="contact" class="btn">Request a demo</a>
         <a href="solutions/sce-scoping" class="btn btn-ghost">See the 12-Week SCE Blueprint</a>
@@ -592,14 +592,10 @@ const fits = ['EDC', 'CRO', 'Central lab', 'IRT', 'SCE'];
     line-height: 1.7;
   }
 
-  .cdr-fits {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin: var(--space-4) 0 var(--space-8);
+  .cdr-cta-actions {
+    justify-content: flex-start;
+    margin-top: var(--space-6);
   }
-
-  .cdr-cta-actions { justify-content: flex-start; }
 
   .cdr-cta-stat {
     background: var(--color-primary);
