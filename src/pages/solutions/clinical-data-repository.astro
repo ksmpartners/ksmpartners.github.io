@@ -129,8 +129,8 @@ const audiences = [
     class={`hero${heroImage ? ' cdr-hero--image' : ''}`}
     style={heroImage ? `--cdr-hero-bg: url(${heroImage})` : undefined}
   >
-    <span class="overline">Clinical Data Repository on Databricks</span>
-    <h1>Trust your study data from the first transfer to database lock</h1>
+    <span class="overline">Solutions — Life Sciences</span>
+    <h1>A clinical data repository you can trust from first transfer to database lock</h1>
     <p>
       All your study sources, from EDCs to central labs and external vendors, in one unified layer
       your SCE reads in place. Discrepancies tracked, changes surfaced, and issues raised months
@@ -304,6 +304,14 @@ const audiences = [
     margin-bottom: var(--space-2);
   }
 
+  .hero p { text-wrap: balance; }
+
+  /* Section headings sit clearly above the h3s inside them (the browser
+     default h2 is the same 1.5rem as the feature titles) */
+  h2 {
+    font-size: clamp(1.75rem, 3.2vw, var(--text-4xl));
+  }
+
   .cdr-label {
     font-size: 0.75rem;
     font-weight: 700;
@@ -461,7 +469,7 @@ const audiences = [
   .cdr-feature--reverse .cdr-feature-text { order: 2; }
 
   .cdr-feature-text h3 {
-    font-size: var(--text-2xl);
+    font-size: var(--text-xl);
     letter-spacing: -0.02em;
     margin-bottom: var(--space-3);
   }
@@ -560,6 +568,7 @@ const audiences = [
 
   .cdr-note {
     margin: var(--space-10) 0 0;
+    text-align: right;
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     letter-spacing: 0.04em;
