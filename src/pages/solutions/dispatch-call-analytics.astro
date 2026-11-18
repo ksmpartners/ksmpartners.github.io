@@ -5,6 +5,16 @@ const base = import.meta.env.BASE_URL;
 const productUrl = 'https://www.ksmpartners.com/dispatch-call-analytics/';
 const com002 = 'https://www.nerc.com/globalassets/standards/reliability-standards/com/com-002-4.pdf';
 const com003 = 'https://www.nerc.com/globalassets/standards/projects/2007-02/com-003-1_white_paper_may-2012.pdf';
+const howItWorks = `${Astro.url.pathname}#how-it-works`;
+const compliance = `${Astro.url.pathname}#compliance`;
+const img = (name: string) => `${base}images/dispatch-call-analytics/${name}.webp`;
+
+const highlights = [
+  { title: 'Transcribe', body: 'within minutes of the call' },
+  { title: 'Who spoke when', body: 'on every line of every call' },
+  { title: 'Any moment', body: 'played from the exact second' },
+  { title: 'Per call', body: 'Legal Hold and retention' },
+];
 
 const problems = [
   { title: 'Human transcription', body: 'People replay recordings and type up what was said, by hand, just to find one instruction or one MW value.' },
@@ -24,38 +34,130 @@ const features = [
   {
     overline: 'Transcript & playback',
     title: 'Read along, then play from that point',
-    body: 'Every call opens as a conversation, not a waveform. Each line is attributed to a speaker, stamped with its time and playable on its own.',
     bullets: [
+      'Speaker-labeled lines, each with its own play button',
       'Confidence check on every line, so reviewers know what to verify',
       'Corrections tracked in a full change history',
       'Equipment, units, acronyms and members tagged as they are said',
     ],
-    image: `${base}images/dispatch-call-analytics/transcript.webp`,
-    alt: 'A call transcript with two speakers, timestamps, play buttons and tagged terms',
+    image: 'transcript',
+    alt: 'A call transcript with two speakers, timestamps, play buttons and tagged terms, under the emergency and operating conditions the call falls in',
+  },
+  {
+    overline: 'Ask',
+    title: 'Ask a question, get an answer with sources',
+    bullets: [
+      'Shortcuts for equipment, alerts, shift handovers, tickets and terms',
+      'Every sentence cites the call and the moment it came from',
+      'Answers come only from your own recordings, never from outside them',
+    ],
+    image: 'ask',
+    alt: 'The Ask page with a question box and shortcut buttons for equipment, alerts, shift handovers, tickets and dictionary',
   },
   {
     overline: 'Call log',
     title: 'Every call, its status at a glance',
-    body: 'See each call with its line, direction, station and length, plus icons that show transcript quality, three-part communication, emergency status and Legal Hold.',
     bullets: [
-      'Filter to emergency calls in one click',
+      'Filter by operating condition in one click',
       'Three-part communication detected automatically',
-      'Declare an emergency window once and every overlapping call is marked',
+      'Legal Hold and hold-released status shown on each call',
     ],
-    image: `${base}images/dispatch-call-analytics/call-log.webp`,
-    alt: 'A list of calls with line, direction, station, length and status icons',
+    image: 'call-log',
+    alt: 'A list of calls with line, direction, station, length, operating condition icons and status icons',
+    extra: {
+      image: 'call-status',
+      caption: 'What the icons mean',
+      alt: 'Status icon legend: clear transcript, needs a look, low confidence, not checked, three-part communication, and operating conditions including emergency, Legal Hold, scheduled maintenance, system outage, market, communications and external events',
+    },
+  },
+  {
+    overline: 'Operating conditions',
+    title: 'Record the condition once; every call in it is marked',
+    bullets: [
+      'Category, type, severity, start, end and description recorded',
+      'Calls are re-marked automatically when a condition changes',
+      'Overlapping, planned-ahead and open-ended conditions supported',
+    ],
+    image: 'operating-conditions',
+    alt: 'Adding an operating condition with its category, type, period and severity, over the list of conditions in effect',
+  },
+  {
+    overline: 'Terms dictionary',
+    title: 'Teach it how your control room talks',
+    bullets: [
+      'A name you pick also finds the other ways it was said, such as "limb one" for Limerick 1',
+      'Terms grouped by kind: members, equipment, acronyms and jargon',
+      'Shared across every user and every call',
+    ],
+    image: 'dictionary',
+    alt: 'The terms dictionary listing members, acronyms and jargon with how people say them',
+  },
+  {
+    overline: 'Dashboard',
+    title: 'Operations at a glance',
+    body: 'Calls today and in the last hour, transcript reliability and confidence, flagged calls, and daily volume, per line or across all lines.',
+    image: 'dashboard',
+    alt: 'Dashboard showing calls today, reliability, average confidence, flags and calls per day',
   },
 ];
 
 const audiences = [
-  { title: 'Dispatch', body: 'Check that three-part communication is followed, link outage calls to tickets in your outage ticketing system, and use real calls as training moments.' },
-  { title: 'Compliance', body: 'Timestamped recordings and transcripts as evidence that Operating Instructions were issued and confirmed, kept to your retention policy.' },
-  { title: 'Market Settlements', body: 'Find the call behind a charge in seconds rather than hours, and settle questions such as which party requested a curtailment.' },
-  { title: 'Transmission Services', body: 'Audit interchange checkout calls and confirm the exact MW value, path and timing agreed across tie lines.' },
-  { title: 'Legal', body: 'Place a Legal Hold on an individual recording to preserve it and all its data until an authorized administrator releases it.' },
+  {
+    title: 'Dispatch',
+    sub: 'Control room',
+    bullets: [
+      'Check that three-part communication is followed on every call',
+      'Link outage calls to the matching outage in your OMS',
+      'Shift leads review real calls and use them for training',
+    ],
+  },
+  {
+    title: 'Compliance',
+    sub: 'NERC evidence',
+    bullets: [
+      'Recordings and transcripts kept to company retention policy',
+      'Calls that miss three-part communication are flagged',
+      'Timestamped evidence that Operating Instructions were issued and confirmed',
+    ],
+  },
+  {
+    title: 'Market Settlements',
+    sub: 'Billing accuracy',
+    bullets: [
+      'Find the call behind a charge in seconds rather than hours',
+      'Settle questions such as which party requested a curtailment',
+      'Bill from what was actually said',
+    ],
+  },
+  {
+    title: 'Transmission Services',
+    sub: 'Interchange checkout',
+    bullets: [
+      'Audit checkout calls between neighboring BAs',
+      'Confirm the MW value, path and timing for net scheduled interchange',
+    ],
+  },
+  {
+    title: 'Legal',
+    sub: 'Legal Hold, per call',
+    body: 'Place a hold on a single recording to preserve it and block any change or deletion until an authorized administrator removes it — for workplace accidents, switching disputes, operator error investigations, FERC, NERC and OSHA investigations, litigation and discovery requests.',
+  },
 ];
 
-const entities = ['BA', 'RC', 'TOP', 'GOP', 'DP', 'ISO / RTO'];
+const measures = [
+  { code: 'M5', title: 'Issuers', who: 'RC, TOP, BA', body: 'For two-party Operating Instructions during an Emergency, show the issuer confirmed the repeat-back, reissued the instruction, or took another action.' },
+  { code: 'M6', title: 'Recipients', who: 'BA, DP, GOP, TOP', body: 'Show the recipient repeated the instruction back and got confirmation, or asked for it to be reissued.' },
+  { code: 'M7', title: 'Burst instructions', who: 'BA, RC, TOP', body: 'For burst Operating Instructions during an Emergency, show at least one receiver got the instruction.' },
+];
+
+const entities = [
+  { code: 'BA', title: 'Balancing Authority', body: 'Real-time balance of generation and load, and interchange checkouts.' },
+  { code: 'RC', title: 'Reliability Coordinator', body: 'Wide-area reliability oversight and emergency coordination.' },
+  { code: 'TOP', title: 'Transmission Operator', body: 'Operates the high-voltage transmission grid.' },
+  { code: 'GOP', title: 'Generator Operator', body: 'Operates generating facilities and receives dispatch instructions.' },
+  { code: 'DP', title: 'Distribution Provider', body: 'Operates the distribution system that serves customers.' },
+  { code: 'ISO / RTO', title: 'Market operators', body: 'Run wholesale markets, dispatch and settlements.' },
+];
 ---
 <PageLayout
   title="Dispatch Call Analytics | KSM Technology Partners"
@@ -63,16 +165,16 @@ const entities = ['BA', 'RC', 'TOP', 'GOP', 'DP', 'ISO / RTO'];
 >
 
   <!-- Hero -->
-  <section class="hero dca-hero" style={`--dca-hero-bg: url(${base}images/dispatch-call-analytics/search.webp)`}>
+  <section class="hero">
     <span class="overline">Solutions — Utilities</span>
-    <h1>Dispatch Call Analytics</h1>
+    <h1>Find any control-room call by what was said</h1>
     <p>
-      Find any control-room call by what was said. Dispatch Call Analytics transcribes your
-      recorded calls, identifies who spoke when, and plays the recording from the exact moment you need.
+      Dispatch Call Analytics transcribes your recorded calls, shows who spoke when, and finds any
+      call by what was said, when, and on which line. Built for NERC&nbsp;control&nbsp;rooms.
     </p>
     <div class="hero-actions">
-      <a href={productUrl} class="btn btn-teal">Explore Dispatch Call Analytics</a>
-      <a href="../contact" class="btn btn-outline">Talk to an Expert</a>
+      <a href={productUrl} class="btn btn-teal">Request a demo</a>
+      <a href={howItWorks} class="btn btn-outline">See how it works</a>
     </div>
     <a href="our-partners" class="hero-built-on">
       <span>Built on</span>
@@ -80,134 +182,245 @@ const entities = ['BA', 'RC', 'TOP', 'GOP', 'DP', 'ISO / RTO'];
     </a>
   </section>
 
-  <!-- Problem -->
-  <div class="section">
-    <div class="dca-intro">
-      <div>
-        <span class="overline">The problem</span>
-        <h2>Recorded isn't the same as findable.</h2>
-        <p class="intro-para">
-          Balancing Authorities, Reliability Coordinators, Transmission and Generator Operators,
-          Distribution Providers, ISOs and RTOs record every control-room call. Finding a specific
-          call, or what was said in it, still means listening through recordings by hand.
-        </p>
-      </div>
-      <aside class="dca-nerc-block">
-        <div class="dca-label">NERC communication standards</div>
-        <p>
-          Helps you meet <a href={com002} target="_blank" rel="noopener noreferrer">COM-002-4</a> and{" "}
-          <a href={com003} target="_blank" rel="noopener noreferrer">COM-003-1</a> with dated, timestamped
-          recordings and transcripts as evidence for Operating Instructions, and three-part
-          communication checked on every call.
-        </p>
-      </aside>
-    </div>
-    <div class="dca-problems">
-      {problems.map(p => (
-        <div class="dca-problem">
-          <h3>{p.title}</h3>
-          <p>{p.body}</p>
-        </div>
+  <!-- Search showcase -->
+  <div class="section dca-showcase">
+    <figure class="dca-shot">
+      <a href={img('search')} target="_blank" rel="noopener" aria-label="Open full-size search screenshot">
+        <img src={img('search')} alt="Searching calls for 'megawatts' shows 13 matching calls and 29 moments, with the transcript open at the moment it was said" width="1896" height="815" />
+      </a>
+      <figcaption>Search · 13 calls found · 29 moments</figcaption>
+    </figure>
+    <ul class="dca-highlights">
+      {highlights.map(h => (
+        <li><strong>{h.title}</strong><span>{h.body}</span></li>
       ))}
+    </ul>
+  </div>
+
+  <!-- Problem -->
+  <div class="section-pale">
+    <div class="section">
+      <div class="dca-intro">
+        <div>
+          <span class="overline">The problem</span>
+          <h2>Recorded isn't the same as findable.</h2>
+          <p class="intro-para">
+            Balancing Authorities, Reliability Coordinators, Transmission and Generator Operators,
+            Distribution Providers, ISOs and RTOs record every control-room call. Finding a specific
+            call, or what was said in it, still means listening through recordings by hand. It's slow,
+            and costly for Market Settlements.
+          </p>
+        </div>
+        <aside class="dca-nerc-block">
+          <div class="dca-label">NERC communication standards</div>
+          <p>
+            Helps you meet <a href={com002} target="_blank" rel="noopener noreferrer">COM-002-4</a> and{" "}
+            <a href={com003} target="_blank" rel="noopener noreferrer">COM-003-1</a> with dated, timestamped
+            recordings and transcripts as evidence for Operating Instructions issued during an Emergency,
+            and three-part communication checked on every call.
+          </p>
+          <a href={compliance} class="dca-nerc-link">How it helps <span aria-hidden="true">→</span></a>
+        </aside>
+      </div>
+      <div class="dca-problems">
+        {problems.map(p => (
+          <div class="dca-problem">
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 
   <!-- How it works -->
-  <div class="section-pale">
-    <div class="section">
-      <span class="overline">How it works</span>
-      <h2>From recording to the right moment</h2>
-      <ol class="dca-steps">
-        {steps.map((s, i) => (
-          <li class="dca-step">
-            <span class="dca-step-num">{String(i + 1).padStart(2, '0')}</span>
-            <h3>{s.title}</h3>
-            <p>{s.body}</p>
-          </li>
-        ))}
-      </ol>
+  <div class="section" id="how-it-works">
+    <span class="overline">How it works</span>
+    <h2>From recording to the right moment</h2>
+    <p class="intro-para dca-narrow">
+      Works with the call recording system you already have. Nothing changes for operators.
+    </p>
+    <ol class="dca-steps">
+      {steps.map((s, i) => (
+        <li class="dca-step">
+          <span class="dca-step-num">{String(i + 1).padStart(2, '0')}</span>
+          <h3>{s.title}</h3>
+          <p>{s.body}</p>
+        </li>
+      ))}
+    </ol>
+    <div class="dca-oms">
+      <div class="dca-label">Integration</div>
+      <h3>Linked to your Outage Management System (OMS)</h3>
+      <p>
+        Calls that discuss taking an outage are linked to the matching outage, and calls can be
+        searched by outage number. Works with an in-house OMS or OATI's webSmartOMS.
+      </p>
     </div>
   </div>
 
   <!-- Features -->
-  <div class="section">
-    <span class="overline">Features</span>
-    <h2>Built for the way control rooms work</h2>
-    <div class="dca-features">
-      {features.map((f, i) => (
-        <div class={`dca-feature${i % 2 ? ' dca-feature--reverse' : ''}`}>
-          <div class="dca-feature-text">
-            <span class="dca-label">{f.overline}</span>
-            <h3>{f.title}</h3>
-            <p>{f.body}</p>
-            <ul class="dca-list">
-              {f.bullets.map(b => <li>{b}</li>)}
-            </ul>
-          </div>
-          <div class="dca-feature-media">
-            <img src={f.image} alt={f.alt} loading="lazy" />
-          </div>
-        </div>
-      ))}
-    </div>
-    <p class="dca-more">
-      Plus plain-English questions answered with cited sources, a shared terms dictionary that
-      teaches it how your control room talks, outage-ticket linking and an operations dashboard.{" "}
-      <a href={productUrl}>See every feature <span aria-hidden="true">→</span></a>
-    </p>
-  </div>
-
-  <!-- Who benefits -->
   <div class="section-pale">
     <div class="section">
-      <span class="overline">Who benefits</span>
-      <h2>One system, value across the organization</h2>
-      <div class="grid-3 dca-audiences">
-        {audiences.map(a => (
-          <div class="card">
-            <h3>{a.title}</h3>
-            <p>{a.body}</p>
+      <span class="overline">Features</span>
+      <h2>Built for the way control rooms work</h2>
+      <div class="dca-features">
+        {features.map((f, i) => (
+          <div class={`dca-feature${i % 2 ? ' dca-feature--reverse' : ''}`}>
+            <div class="dca-feature-text">
+              <span class="dca-label">{f.overline}</span>
+              <h3>{f.title}</h3>
+              {f.body && <p>{f.body}</p>}
+              {f.bullets && (
+                <ul class="dca-list">
+                  {f.bullets.map(b => <li>{b}</li>)}
+                </ul>
+              )}
+            </div>
+            <div class="dca-feature-media">
+              <a href={img(f.image)} target="_blank" rel="noopener" aria-label={`Open full-size ${f.overline} screenshot`}>
+                <img src={img(f.image)} alt={f.alt} loading="lazy" />
+              </a>
+              {f.extra && (
+                <figure class="dca-extra">
+                  <figcaption class="dca-label">{f.extra.caption}</figcaption>
+                  <a href={img(f.extra.image)} target="_blank" rel="noopener" aria-label={`Open full-size ${f.extra.caption} screenshot`}>
+                    <img src={img(f.extra.image)} alt={f.extra.alt} loading="lazy" />
+                  </a>
+                </figure>
+              )}
+            </div>
           </div>
         ))}
       </div>
     </div>
   </div>
 
-  <!-- Built for / CTA -->
-  <div class="section dca-cta">
-    <div>
-      <span class="overline">Built for</span>
-      <h2>Every NERC functional entity with a control room</h2>
-      <p>
-        Many organizations hold several registrations at once. Dispatch Call Analytics serves all of
-        them from one searchable record, built on Databricks and kept to your company retention policy.
-      </p>
-      <div class="dca-entities">
-        {entities.map(e => <span class="tag">{e}</span>)}
+  <!-- Who benefits -->
+  <div class="section">
+    <span class="overline">Who benefits</span>
+    <h2>One system, value across the organization</h2>
+    <div class="grid-3 dca-audiences">
+      {audiences.map(a => (
+        <div class="card">
+          <span class="dca-label">{a.sub}</span>
+          <h3>{a.title}</h3>
+          {a.body && <p>{a.body}</p>}
+          {a.bullets && (
+            <ul class="dca-list">
+              {a.bullets.map(b => <li>{b}</li>)}
+            </ul>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- Compliance -->
+  <div class="section-pale" id="compliance">
+    <div class="section">
+      <div class="dca-intro">
+        <div>
+          <span class="overline">NERC compliance</span>
+          <h2>Evidence ready when the auditor asks</h2>
+          <p class="intro-para">
+            <a href={com002} target="_blank" rel="noopener noreferrer">COM-002-4</a> accepts dated,
+            timestamped voice recordings and transcripts as evidence for Operating Instructions issued
+            during an Emergency. Dispatch Call Analytics keeps both, marks the calls in each emergency
+            and operating condition, and shows where three-part communication
+            (<a href={com003} target="_blank" rel="noopener noreferrer">COM-003-1</a>) was followed.
+          </p>
+        </div>
+        <ul class="dca-list dca-compliance-list">
+          <li>Three-part communication detected and badged on each call</li>
+          <li>Operating conditions mark every overlapping call</li>
+          <li>Dated, timestamped recordings and transcripts</li>
+          <li>Kept to your company retention policy</li>
+        </ul>
       </div>
-      <div class="hero-actions dca-cta-actions">
-        <a href={productUrl} class="btn">Request a Demo</a>
-        <a href="../contact" class="btn btn-ghost">Schedule a Conversation</a>
+      <div class="grid-3 dca-measures">
+        {measures.map(m => (
+          <div class="card">
+            <span class="dca-measure-code">COM-002-4 · {m.code}</span>
+            <h3>{m.title}</h3>
+            <span class="dca-measure-who">{m.who}</span>
+            <p>{m.body}</p>
+          </div>
+        ))}
+      </div>
+      <p class="dca-disclaimer">
+        Summaries are for orientation only; refer to the NERC standard. Dispatch Call Analytics supplies
+        evidence and does not replace your compliance program.
+      </p>
+
+      <div class="dca-cip">
+        <div>
+          <div class="dca-label">NERC CIP-011-3 · Information protection</div>
+          <h3>Protects the BES Cyber System Information in your calls</h3>
+          <p>
+            Calls can contain BCSI. Recordings and transcripts are kept in Databricks Unity Catalog,
+            where BCSI can be tagged, masked or filtered, limited to an authorized group, and logged —
+            producing access evidence for CIP-011-3 and CIP-004-7.
+          </p>
+          <a href="blog/databricks-nerc-cip-011-bcsi" class="btn btn-teal">Read our guide: Protecting BCSI on Databricks</a>
+        </div>
+        <ul class="dca-list">
+          <li>Calls and transcripts tagged as BCSI, redacted for unauthorized users</li>
+          <li>Access granted to a group synced from your identity provider</li>
+          <li>Logins, queries and data access recorded in audit tables</li>
+          <li>Customer-managed keys, Private Link and the compliance security profile</li>
+        </ul>
       </div>
     </div>
-    <div class="dca-cta-stat">
-      <span>KSM Technology Partners has over</span>
-      <strong>23 years</strong>
-      <span>building mission-critical systems for utilities, ISOs and RTOs.</span>
+  </div>
+
+  <!-- Built for -->
+  <div class="section">
+    <span class="overline">Built for</span>
+    <h2>Every NERC functional entity with a control room</h2>
+    <p class="intro-para dca-narrow">
+      Many organizations hold several registrations at once. Dispatch Call Analytics serves all of
+      them from one searchable record.
+    </p>
+    <div class="grid-3 dca-entities">
+      {entities.map(e => (
+        <div class="card">
+          <span class="tag">{e.code}</span>
+          <h3>{e.title}</h3>
+          <p>{e.body}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="section-pale">
+    <div class="section dca-cta">
+      <div>
+        <span class="overline">Built on Databricks</span>
+        <h2>Hear it for yourself.</h2>
+        <p>
+          Recordings, transcripts and metadata are stored on Databricks to your company retention policy,
+          with Unity Catalog governing BCSI access and audit tables recording who accessed it. KSM
+          Technology Partners is a Databricks certified partner. See it search, transcribe and play back
+          calls in a live demo.
+        </p>
+        <div class="hero-actions dca-cta-actions">
+          <a href={productUrl} class="btn">Request a demo</a>
+          <a href="contact" class="btn btn-ghost">Schedule a Conversation</a>
+        </div>
+      </div>
+      <div class="dca-cta-stat">
+        <span>KSM Technology Partners has over</span>
+        <strong>23 years</strong>
+        <span>building mission-critical systems for utilities, ISOs and RTOs.</span>
+      </div>
     </div>
   </div>
 
 </PageLayout>
 
 <style>
-  .dca-hero {
-    background-image:
-      linear-gradient(rgba(0, 31, 46, 0.82), rgba(0, 31, 46, 0.82)),
-      var(--dca-hero-bg);
-    background-size: cover;
-    background-position: center;
-  }
-
   .overline {
     display: block;
     font-size: 0.75rem;
@@ -217,6 +430,8 @@ const entities = ['BA', 'RC', 'TOP', 'GOP', 'DP', 'ISO / RTO'];
     color: var(--color-accent);
     margin-bottom: var(--space-2);
   }
+
+  .hero p { text-wrap: balance; }
 
   .dca-label {
     font-size: 0.75rem;
@@ -233,6 +448,65 @@ const entities = ['BA', 'RC', 'TOP', 'GOP', 'DP', 'ISO / RTO'];
     line-height: 1.75;
     color: #555;
   }
+
+  .dca-narrow { max-width: 760px; }
+
+  /* Showcase */
+  .dca-shot { margin: 0; }
+
+  .dca-shot img,
+  .dca-feature-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(178, 209, 234, 0.5);
+    box-shadow:
+      0 2px 6px rgba(0, 77, 113, 0.06),
+      0 16px 40px rgba(0, 77, 113, 0.14);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .dca-shot a:hover img,
+  .dca-feature-media a:hover img { transform: translateY(-3px); }
+  .dca-shot a:active img,
+  .dca-feature-media a:active img { transform: translateY(0); }
+  .dca-shot a:focus-visible,
+  .dca-feature-media a:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+    border-radius: 0.75rem;
+  }
+  .dca-shot a,
+  .dca-feature-media a { display: block; }
+
+  .dca-shot figcaption {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: #667;
+    text-align: center;
+    margin-top: var(--space-3);
+  }
+
+  .dca-highlights {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-8) 0 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-6);
+  }
+
+  .dca-highlights li {
+    border-top: 3px solid var(--color-accent);
+    padding-top: var(--space-3);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .dca-highlights strong { color: var(--color-primary); font-size: 1.05rem; }
+  .dca-highlights span { color: #555; font-size: 0.9rem; }
 
   /* Intro */
   .dca-intro {
@@ -253,7 +527,7 @@ const entities = ['BA', 'RC', 'TOP', 'GOP', 'DP', 'ISO / RTO'];
     color: rgba(255, 255, 255, 0.85);
     font-size: 0.95rem;
     line-height: 1.7;
-    margin: 0;
+    margin: 0 0 var(--space-4);
   }
 
   .dca-nerc-block a {
@@ -263,6 +537,7 @@ const entities = ['BA', 'RC', 'TOP', 'GOP', 'DP', 'ISO / RTO'];
 
   .dca-nerc-block a:hover,
   .dca-nerc-block a:focus-visible { color: #fff; }
+  .dca-nerc-block a:active { opacity: 0.8; }
 
   .dca-problems {
     display: grid;
@@ -276,12 +551,14 @@ const entities = ['BA', 'RC', 'TOP', 'GOP', 'DP', 'ISO / RTO'];
     padding-top: var(--space-4);
   }
 
-  .dca-problem h3 {
+  .dca-problem h3,
+  .dca-step h3 {
     font-size: var(--text-lg);
     margin-bottom: var(--space-2);
   }
 
-  .dca-problem p {
+  .dca-problem p,
+  .dca-step p {
     font-size: 0.9rem;
     line-height: 1.65;
     color: #555;
@@ -296,13 +573,13 @@ const entities = ['BA', 'RC', 'TOP', 'GOP', 'DP', 'ISO / RTO'];
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: var(--space-6);
-    counter-reset: none;
   }
 
   .dca-step {
     background: #fff;
     border-radius: 0.75rem;
     padding: var(--space-6);
+    border: 1px solid rgba(178, 209, 234, 0.5);
     box-shadow: 0 2px 6px rgba(0, 77, 113, 0.06), 0 8px 24px rgba(0, 77, 113, 0.08);
   }
 
@@ -314,17 +591,16 @@ const entities = ['BA', 'RC', 'TOP', 'GOP', 'DP', 'ISO / RTO'];
     margin-bottom: var(--space-3);
   }
 
-  .dca-step h3 {
-    font-size: var(--text-lg);
-    margin-bottom: var(--space-2);
+  .dca-oms {
+    margin-top: var(--space-10);
+    padding: var(--space-6) var(--space-8);
+    border-left: 4px solid var(--color-accent);
+    background: var(--color-pale, #f2f8fc);
+    border-radius: 0 0.75rem 0.75rem 0;
   }
 
-  .dca-step p {
-    font-size: 0.9rem;
-    line-height: 1.65;
-    color: #555;
-    margin: 0;
-  }
+  .dca-oms h3 { margin-bottom: var(--space-2); }
+  .dca-oms p { color: #555; line-height: 1.7; margin: 0; max-width: 780px; }
 
   /* Features */
   .dca-features {
@@ -336,11 +612,12 @@ const entities = ['BA', 'RC', 'TOP', 'GOP', 'DP', 'ISO / RTO'];
 
   .dca-feature {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 2fr 3fr;
     gap: var(--space-12);
     align-items: center;
   }
 
+  .dca-feature--reverse { grid-template-columns: 3fr 2fr; }
   .dca-feature--reverse .dca-feature-text { order: 2; }
 
   .dca-feature-text h3 {
@@ -354,16 +631,8 @@ const entities = ['BA', 'RC', 'TOP', 'GOP', 'DP', 'ISO / RTO'];
     line-height: 1.7;
   }
 
-  .dca-feature-media img {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 0.75rem;
-    border: 1px solid rgba(178, 209, 234, 0.5);
-    box-shadow:
-      0 2px 6px rgba(0, 77, 113, 0.06),
-      0 16px 40px rgba(0, 77, 113, 0.14);
-  }
+  .dca-extra { margin: var(--space-6) 0 0; }
+  .dca-extra figcaption { margin-bottom: var(--space-2); }
 
   .dca-list {
     list-style: none;
@@ -393,22 +662,61 @@ const entities = ['BA', 'RC', 'TOP', 'GOP', 'DP', 'ISO / RTO'];
     background: var(--color-accent);
   }
 
-  .dca-more {
-    margin-top: var(--space-12);
-    color: #555;
-    line-height: 1.7;
-    max-width: 780px;
-  }
+  .dca-audiences,
+  .dca-measures,
+  .dca-entities { margin-top: var(--space-8); }
 
-  .dca-more a { font-weight: 600; white-space: nowrap; }
-
-  .dca-audiences { margin-top: var(--space-8); }
-
-  .dca-audiences .card p {
+  .dca-audiences .card p,
+  .dca-measures .card p,
+  .dca-entities .card p {
     color: #555;
     line-height: 1.65;
     margin: 0;
   }
+
+  .dca-audiences .card .dca-label { margin-bottom: var(--space-1, 0.25rem); }
+
+  .dca-entities .tag { margin-bottom: var(--space-3); display: inline-block; }
+
+  /* Compliance */
+  .dca-compliance-list { margin-top: var(--space-10); }
+
+  .dca-measure-code {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--color-accent);
+    display: block;
+    margin-bottom: var(--space-2);
+  }
+
+  .dca-measure-who {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin: -0.25rem 0 var(--space-3);
+  }
+
+  .dca-disclaimer {
+    font-size: 0.8rem;
+    color: #777;
+    margin-top: var(--space-4);
+  }
+
+  .dca-cip {
+    margin-top: var(--space-12);
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: var(--space-12);
+    align-items: center;
+    background: #fff;
+    border-radius: 0.75rem;
+    padding: var(--space-8);
+    border: 1px solid rgba(178, 209, 234, 0.5);
+    box-shadow: 0 2px 6px rgba(0, 77, 113, 0.06), 0 12px 32px rgba(0, 77, 113, 0.1);
+  }
+
+  .dca-cip p { color: #555; line-height: 1.7; }
 
   /* CTA */
   .dca-cta {
@@ -421,13 +729,6 @@ const entities = ['BA', 'RC', 'TOP', 'GOP', 'DP', 'ISO / RTO'];
   .dca-cta p {
     color: #555;
     line-height: 1.7;
-  }
-
-  .dca-entities {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin: var(--space-4) 0 var(--space-8);
   }
 
   .dca-cta-actions { justify-content: flex-start; }
@@ -459,18 +760,23 @@ const entities = ['BA', 'RC', 'TOP', 'GOP', 'DP', 'ISO / RTO'];
 
   @media (max-width: 960px) {
     .dca-problems,
-    .dca-steps { grid-template-columns: repeat(2, 1fr); }
+    .dca-steps,
+    .dca-highlights { grid-template-columns: repeat(2, 1fr); }
   }
 
   @media (max-width: 768px) {
     .dca-intro,
     .dca-feature,
+    .dca-feature--reverse,
+    .dca-cip,
     .dca-cta { grid-template-columns: 1fr; gap: var(--space-8); }
     .dca-feature--reverse .dca-feature-text { order: 0; }
+    .dca-compliance-list { margin-top: 0; }
   }
 
   @media (max-width: 520px) {
     .dca-problems,
-    .dca-steps { grid-template-columns: 1fr; }
+    .dca-steps,
+    .dca-highlights { grid-template-columns: 1fr; }
   }
 </style>
